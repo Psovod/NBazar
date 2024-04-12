@@ -1,0 +1,32 @@
+<div
+  class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full"
+></div>
+
+<div
+  class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white rounded-lg shadow-lg p-8 m-4 max-w-xl w-full"
+>
+  <div class="flex justify-between items-center mb-4">
+    <h4 class="text-lg font-bold capitalize">{{ title }}</h4>
+    <button class="text-gray-500 hover:text-black" (click)="close()">
+      <fa-icon [icon]="closeIcon" size="xl"></fa-icon>
+    </button>
+  </div>
+
+  <div class="mb-6">
+    <p class="text-sm">
+      {{ content }}
+    </p>
+  </div>
+
+  <div class="flex justify-end gap-2">
+    <button
+      (click)="close()"
+      class="px-4 py-2 bg-gray-100 text-sm rounded-md hover:bg-gray-200"
+    >
+      Zavřít
+    </button>
+    <button class="px-4 py-2 bg-gray-100 text-sm rounded-md hover:bg-gray-200">
+      Potrvdit
+    </button>
+  </div>
+</div>

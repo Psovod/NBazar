@@ -1,0 +1,32 @@
+<div class="relative inline-block text-left">
+  <div
+    class="flex gap-1 w-full bg-white px-4 py-2 text-3xl cursor-pointer font-semibold capitalize text-gray-700"
+    (click)="toggleDropdown()"
+  >
+    <span class="capitalize">
+      {{ label }}
+    </span>
+    <fa-icon [icon]="icon"></fa-icon>
+  </div>
+  @if (isOpen && items.length > 0) {
+
+  <div
+    class="absolute z-10 w-full right-0 mt-2 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 p-1 space-y-1"
+  >
+    <div
+      class="p-1"
+      role="menu"
+      aria-orientation="vertical"
+      aria-labelledby="dropdown-button"
+    >
+      @for (item of items; track $index) {<a
+        (click)="itemSelected(item)"
+        class="flex cursor-pointer rounded-md p-2 text-base text-gray-700 hover:bg-gray-100 active:bg-blue-100"
+        role="menuitem"
+      >
+        {{ item }} </a
+      >}
+    </div>
+  </div>
+  }
+</div>

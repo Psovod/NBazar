@@ -1,0 +1,69 @@
+<div class="flex gap-2 w-full">
+  <!-- Left Side: Map Container -->
+  <div class="flex-1 max-h-screen">
+    <app-maps></app-maps>
+  </div>
+
+  <div
+    class="flex-1 rounded-lg bg-white shadow-md max-h-screen overflow-scroll min-h-screen"
+  >
+    <div class="sticky top-0 p-4 bg-gray-50 z-10 border-b border-gray-200">
+      <h3 class="font-semibold text-lg">Property Listings</h3>
+    </div>
+    <div class="p-4">
+      <div class="grid grid-cols-1 gap-4">
+        @for (result of searchResults$ | async; track result) {
+        <div
+          (click)="viewProperty(result.property.id)"
+          class="bg-gray-50 hover:bg-gray-100 rounded-lg transition duration-150 ease-in-out p-4"
+        >
+          <!-- Property Images Gallery -->
+          <div class="grid grid-cols-3 gap-2">
+            <img
+              [ngSrc]="'https://via.placeholder.com/300x300'"
+              [width]="300"
+              [height]="300"
+              alt="Property Image 1"
+              [priority]="true"
+              class="rounded-lg w-full object-cover h-32 hover:opacity-75 cursor-pointer"
+              onerror="this.onerror=null; this.src='https://via.placeholder.com/200x150';"
+            />
+            <img
+              [ngSrc]="'https://via.placeholder.com/300x300'"
+              [width]="300"
+              [height]="300"
+              [priority]="true"
+              alt="Property Image 2"
+              class="rounded-lg w-full object-cover h-32 hover:opacity-75 cursor-pointer"
+              onerror="this.onerror=null; this.src='https://via.placeholder.com/200x150';"
+            />
+            <img
+              [width]="300"
+              [height]="300"
+              [priority]="true"
+              [ngSrc]="'https://via.placeholder.com/300x300'"
+              alt="Property Image 3"
+              class="rounded-lg w-full object-cover h-32 hover:opacity-75 cursor-pointer"
+              onerror="this.onerror=null; this.src='https://via.placeholder.com/200x150';"
+            />
+          </div>
+
+          <!-- Basic Info -->
+          <div class="pt-4">
+            <h4 class="text-lg font-bold text-blue-800">{{ result.title }}</h4>
+            <p class="text-sm text-gray-700">
+              <strong>Price:</strong> {{ result.property.price | currency }}
+            </p>
+            <p class="text-sm text-gray-700">
+              <strong>Location:</strong> {{ result.property.location }}
+            </p>
+            <p class="text-sm text-gray-700">
+              <strong>Posted by:</strong> {{ result.property.user_name }}
+            </p>
+          </div>
+        </div>
+        }
+      </div>
+    </div>
+  </div>
+</div>

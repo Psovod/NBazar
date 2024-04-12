@@ -1,0 +1,21 @@
+<google-map
+  [width]="'100%'"
+  [height]="'100%'"
+  [center]="center"
+  [zoom]="zoom"
+  [mapId]="mapId"
+  (mapClick)="addMarker($event)"
+>
+  @for (position of markers$ | async; track position) {
+  <map-advanced-marker
+    #advancedMarker="mapAdvancedMarker"
+    [position]="position.marker.position"
+    [options]="position.marker.options"
+    [title]="position.marker.title"
+    [content]="position.marker.content"
+    (mapDragend)="updatePosition($event, position, advancedMarker)"
+    (mapClick)="toggleHighlight(position)"
+  />
+  }
+  <map-info-window>Info Window content</map-info-window>
+</google-map>
