@@ -7,37 +7,35 @@ import {
   faHome,
   faLandmark,
 } from '@fortawesome/free-solid-svg-icons';
-import { map } from 'rxjs';
+import {
+  REAL_ESTATE_FILTER_BYTY,
+  REAL_ESTATE_FILTER_BYTY_MAP,
+  REAL_ESTATE_FILTER_INPUT_TYPE,
+} from './realestate.byty';
+
+export interface RealEstateFilter {
+  name: string;
+  value: number;
+}
+
 export enum REAL_ESTATE_TYPE {
   BYTY = 'byty',
   DOMY = 'domy',
   PROJEKTY = 'projekty',
   POZEMKY = 'pozemky',
-  KOMERCNI = 'komercni',
-  OSTATNI = 'ostatni',
-}
-export enum REAL_ESTATE_FILTER_BYTY {
-  TYP = 'typ',
-  STAV_OBJEKTU = 'stav objektu',
-  VYBER_LOKALITY = 'vyber lokality',
-  CENA = 'cena',
-  ENERGETICKA_TRIDA = 'energeticka trida',
-  VLASTNICTVI = 'vlastnictví',
-  VYBAVENI = 'vybavení',
-  PATRO = 'patro',
-  PLOCHA = 'plocha',
-  STARI = 'stari',
+  KOMERCNI = 'komerční',
+  OSTATNI = 'ostatní',
 }
 
 export enum REAL_ESTATE_FILTER_DOMY {
   VELIKOST = 'velikost',
   TYP = 'typ',
   STAV_OBJEKTU = 'stav objektu',
-  VYBER_LOKALITY = 'vyber lokality',
+  VYBER_LOKALITY = 'výběr lokality',
   CENA = 'cena',
-  ENERGETICKA_TRIDA = 'energeticka trida',
+  ENERGETICKA_TRIDA = 'energetická třida',
   PLOCHA = 'plocha',
-  STARI = 'stari',
+  STARI = 'staří',
 }
 export enum REAL_ESTATE_FILTER_PROJEKTY {
   PROJEKT = 'projekt',
@@ -45,57 +43,27 @@ export enum REAL_ESTATE_FILTER_PROJEKTY {
 }
 export enum REAL_ESTATE_FILTER_POZEMKY {
   TYP = 'typ',
-  VYBER_LOKALITY = 'vyber lokality',
+  VYBER_LOKALITY = 'výběr lokality',
   CENA = 'cena',
   PLOCHA = 'plocha',
-  STARI = 'stari',
+  STARI = 'staří',
 }
 export enum REAL_ESTATE_FILTER_KOMERCNI {
   TYP = 'typ',
   STAV_OBJEKTU = 'stav objektu',
-  VYBER_LOKALITY = 'vyber lokality',
+  VYBER_LOKALITY = 'výběr lokality',
   CENA = 'cena',
   PLOCHA = 'plocha',
-  STARI = 'stari',
+  STARI = 'staří',
 }
 export enum REAL_ESTATE_FILTER_OSTATNI {
   TYP = 'typ',
   STAV_OBJEKTU = 'stav objektu',
-  VYBER_LOKALITY = 'vyber lokality',
+  VYBER_LOKALITY = 'výběr lokality',
   CENA = 'cena',
-  STARI = 'stari',
+  STARI = 'staří',
 }
-export const REAL_ESTATE_FILTER_BYTY_MAP = {
-  [REAL_ESTATE_FILTER_BYTY.TYP]: [
-    '1+kk',
-    '1+1',
-    '2+kk',
-    '2+1',
-    '3+kk',
-    '3+1',
-    '4+kk',
-    '4+1',
-    '5+kk',
-    '5+1',
-    '6 a více',
-  ],
-  [REAL_ESTATE_FILTER_BYTY.STAV_OBJEKTU]: [
-    'novostavba',
-    'dobrý',
-    've velmi dobrém stavu',
-    've výborném stavu',
-    'po rekonstrukci',
-    'před rekonstrukcí',
-    've výstavbě',
-    'developerský projekt',
-    'projekt',
-  ],
-  [REAL_ESTATE_FILTER_BYTY.VYBER_LOKALITY]: ['Praha', 'Brno'],
-  [REAL_ESTATE_FILTER_BYTY.CENA]: [
-    '1 000 000 - 2 000 000',
-    '2 000 000 - 3 000 000',
-  ],
-};
+
 export const REAL_ESTATE_FILTER_DOMY_MAP = {
   [REAL_ESTATE_FILTER_BYTY.TYP]: [
     'rodinný',
@@ -170,9 +138,15 @@ export interface RealityList {
 export interface RealityFilterTypeCheckbox {
   name: string;
   active: boolean;
+  value?: number;
+  options?: Array<string>;
+  searchIndex: number;
 }
+
 export interface RealityFilterTypeList {
   type: string;
+  hidden: boolean;
+  inputType: REAL_ESTATE_FILTER_INPUT_TYPE;
   filters: Array<RealityFilterTypeCheckbox>;
 }
 export const REAL_ESTATE: Array<RealityList> = [

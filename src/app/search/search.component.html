@@ -14,6 +14,7 @@
       @for (type of activeType; track $index) {
       <button
         (click)="onTypeClick(type)"
+        [disabled]="type.active"
         [ngClass]="{ 'bg-red-500 !text-white ': type.active }"
         class="text-gray-700 px-3 py-1 rounded-full font-bold"
       >
@@ -22,17 +23,36 @@
       }
     </div>
   </div>
-  @for (item of activeFilters; track $index) {
-  <h2 class="font-semibold text-lg capitalize mb-1">{{ item.type }}</h2>
-  <div class="grid grid-flow-col grid-rows-4 mb-1">
-    @for (item of item.filters; track $index) {
+  @for (filter of activeFilters; track $index) { @if (!filter.hidden) {
+
+  <h2 class="font-semibold text-lg capitalize mb-1">{{ filter.type }}</h2>
+  <div class="grid grid-cols-5 md:grid-cols-5 lg:grid-cols-5">
+    @switch (filter.inputType) { @case ('checkbox') { @for (item of
+    filter.filters; track $index) {
     <custom-checkbox
       (onChangeCheckBox)="onCheckboxChange($event)"
       [item]="item"
     ></custom-checkbox>
-    }
+    } } @case ('range') { @for (item of filter.filters; track $index) {
+    <input
+      type="number"
+      placeholder="{{ item.name }}"
+      [(ngModel)]="item.value"
+      class="border border-gray-300 rounded-md p-2 m-2 focus:outline-none focus:ring focus:ring-red-500"
+    />
+
+    } } @case ('dropdown') {
+    <select
+      class="border border-gray-300 rounded-md bg-white p-2 m-2 focus:outline-none focus:ring focus:ring-red-500"
+      [(ngModel)]="filter.filters[0].value"
+    >
+      <option *ngFor="let item of filter.filters[0].options" [value]="item">
+        {{ item }}
+      </option>
+    </select>
+    }}
   </div>
-  }
+  } }
 
   <div class="flex justify-end">
     <button

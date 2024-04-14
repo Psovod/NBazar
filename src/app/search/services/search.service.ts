@@ -19,20 +19,48 @@ export class SearchService {
   }
 
   private getSearchResults(data: Array<RealityFilterTypeList>) {
-    const _query = data.map((item) => {
-      let type = item.type.replaceAll(' ', '_').toLowerCase();
-      return {
-        [type]: item.filters
+    const _query = data.flatMap((item) => {
+      return Object.entries({
+        [item.type]: item.filters
           .filter((filter) => filter.active)
-          .map((filter) => filter.name),
-      };
+          .map((filter) => filter.searchIndex),
+      })
+        .filter(([key, value]) => value.length > 0) // filter out entries with no value
+        .map(
+          ([key, value]) =>
+            `${this.removeDiacritics(key)
+              .replaceAll(' ', '_')
+              .toLocaleLowerCase()}=${value.join(',')}`
+        );
     });
-    return _query
-      .map((item) =>
-        Object.entries(item)
-          .map(([key, value]) => `${key}=${value.join(',')}`)
-          .join('&')
-      )
-      .join('&');
+    return '?' + _query.join('&');
   }
+  public removeDiacritics(value: string): string {
+    const diacritics: { [index: string]: string } = {
+      á: 'a',
+      č: 'c',
+      ď: 'd',
+      é: 'e',
+      ě: 'e',
+      í: 'i',
+      ň: 'n',
+      ó: 'o',
+      ř: 'r',
+      š: 's',
+      ť: 't',
+      ú: 'u',
+      ů: 'u',
+      ý: 'y',
+      ž: 'z',
+    };
+
+    return value
+      .split('')
+      .map((char) => diacritics[char] || char)
+      .join('');
+  }
+}
+
+function remove() {
+  throw new Error('Function not implemented.');
 }

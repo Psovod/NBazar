@@ -209,6 +209,7 @@ export class SearchResultComponent {
     }
   }
   async ngAfterViewInit(): Promise<void> {
+    console.log('route', this.route.snapshot.params);
     await this.init();
   }
 

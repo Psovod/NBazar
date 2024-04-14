@@ -17,14 +17,19 @@ import {
 import { CommonModule } from '@angular/common';
 import { SearchActiveType } from './types';
 import { SearchService } from './services/search.service';
+import { RangeComponent } from '../shared/components/range/range.component';
+import { REAL_ESTATE_FILTER_INPUT_TYPE } from '../shared/constants/realestate.byty';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-search',
   standalone: true,
   imports: [
     CommonModule,
+    FormsModule,
     CheckboxComponent,
     DropdownComponent,
+    RangeComponent,
     FontAwesomeModule,
   ],
   templateUrl: './search.component.html',
@@ -61,33 +66,102 @@ export class SearchComponent {
   );
   public activeFilters: Array<RealityFilterTypeList> = [];
   public iconDown: IconDefinition = faChevronDown;
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.onTypeClick(this.activeType[0]);
+  }
   onCheckboxChange(event: SearchActiveType) {}
   onItemSelected(item: REAL_ESTATE_TYPE) {
     this.router.navigate(['/hledej', item]);
   }
   public async search() {
     const query = this.searchService.query(this.activeFilters);
-    this.router.navigate(['/hledej', this.query, query]);
+    const type = this.searchService
+      .removeDiacritics(this.query)
+      .replaceAll(' ', '_')
+      .toLocaleLowerCase();
+    console.log(this.activeFilters);
+    // await this.router.navigate(['/hledej', type, query]);
   }
   onTypeClick(type: SearchActiveType) {
     this.activeType = this.activeType.map((item) => ({
       name: item.name,
       active: item.name === type.name,
     }));
+    if (this.query === REAL_ESTATE_TYPE.BYTY && type.name === 'Prodej') {
+      //filter 'typ' 'pokoj' from activeFilters
+      this.activeFilters = this.activeFilters.map((filter) => {
+        if (filter.type === 'typ') {
+          filter.filters = filter.filters.filter(
+            (item) => item.name !== 'pokoj'
+          );
+        }
+        if (filter.type === 'vybavení') {
+          filter.hidden = true;
+          filter.filters = filter.filters.map((item) => ({
+            ...item,
+            active: false,
+          }));
+        }
+        return filter;
+      });
+    }
+    if (this.query === REAL_ESTATE_TYPE.BYTY && type.name === 'Pronájem') {
+      this.activeFilters = this.activeFilters.map((filter) => {
+        if (filter.type === 'typ') {
+          const pokojExists = filter.filters.some((f) => f.name === 'pokoj');
+
+          if (!pokojExists) {
+            filter.filters.unshift({
+              name: 'pokoj',
+              active: false,
+              searchIndex: 1,
+            });
+          }
+        }
+        if (filter.type === 'vybavení') {
+          filter.hidden = false;
+        }
+        return filter;
+      });
+    }
   }
   private setFilterType(type: REAL_ESTATE_TYPE) {
     this.activeFilters = [];
+    this.query = type;
     REAL_ESTATE_OBJECT[type].filters.forEach((filter) => {
-      console.log(filter.name === 'cena');
+      let filters;
+      switch (filter.values.type) {
+        case REAL_ESTATE_FILTER_INPUT_TYPE.RANGE:
+          filters = filter.values.array.map((value: any, index: number) => ({
+            name: value,
+            value: null,
+          }));
+          break;
+        case REAL_ESTATE_FILTER_INPUT_TYPE.DROPDOWN:
+          filters = [
+            {
+              name: filter.name,
+              value: filter.values.array[0],
+              options: filter.values.array,
+            },
+          ];
+          break;
+        default:
+          filters = filter.values.array.map((value: any, index: number) => ({
+            name: value,
+            active: false,
+            searchIndex: index + 1,
+          }));
+          break;
+      }
       this.activeFilters.push({
         type: filter.name,
-        filters: filter.values.map((value) => ({
-          name: value,
-          active: false,
-        })),
+        hidden: false,
+        inputType: filter.values.type,
+        filters: filters,
       });
     });
+    console.log(this.activeFilters);
   }
   ngOnDestroy(): void {
     this.routeSubscription.unsubscribe();
