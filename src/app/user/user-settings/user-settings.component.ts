@@ -1,14 +1,10 @@
-import { Component } from '@angular/core';
-import { UserService } from '../services/user.service';
-import { UserSettings } from './types';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import {
-  FormControl,
-  FormGroup,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Subject } from 'rxjs';
+import { AuthService } from '../../shared/auth/auth.service';
+import { User } from '../../shared/auth/types';
+import { UserService } from '../../shared/auth/user.service';
 
 @Component({
   selector: 'app-user-settings',
@@ -18,6 +14,8 @@ import { Subject } from 'rxjs';
   styleUrl: './user-settings.component.scss',
 })
 export class UserSettingsComponent {
+  private auth = inject(AuthService);
+  private user = inject(UserService);
   public form: FormGroup = new FormGroup({
     name: new FormControl('', [Validators.required]),
     surname: new FormControl('', [Validators.required]),
@@ -25,8 +23,8 @@ export class UserSettingsComponent {
     password: new FormControl('', [Validators.required]),
   });
   public loading$ = new Subject<boolean>();
-  constructor(public userService: UserService) {
-    this.form.patchValue(this.userService.settings as UserSettings);
+  constructor() {
+    this.form.patchValue(this.auth.user as User);
   }
   get name() {
     return this.form.controls['name'];
@@ -42,15 +40,7 @@ export class UserSettingsComponent {
   }
   async onSubmit(): Promise<void> {
     this.loading$.next(true);
-    try {
-      await this.userService.postSettings();
-      this.userService.settings = this.form.value;
-    } catch (e) {
-      console.error('Failed to save user settings', e);
-    }
-    // setTimeout(() => {
-    //   this.loading$.next(false);
-    // }, 2000);
+    await this.user.update(this.form.value);
     this.loading$.next(false);
   }
 }

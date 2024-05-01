@@ -2,170 +2,157 @@
   <div class="flex-1 max-h-screen">
     <app-maps></app-maps>
   </div>
-  <div
-    class="flex-1 rounded-lg bg-white shadow-md max-h-screen overflow-scroll min-h-screen"
-  >
+  <div class="flex-1 rounded-lg bg-white shadow-md max-h-screen overflow-scroll min-h-screen">
     <div class="flex flex-col w-full min-h-screen">
       <div class="bg-gray-50 p-4 text-xl font-semibold items-baseline">
         <fa-icon
           (click)="navigateToSearch()"
           class="text-gray-400 mr-1 hover:text-gray-600 cursor-pointer"
           [icon]="icons.back"
-          size="lg"
-        ></fa-icon>
+          size="lg"></fa-icon>
         Zpět na seznam
       </div>
-
       <div class="flex flex-col flex-1 overflow-hidden">
+        @if (reality$ | async; as reality) {
         <div class="relative bg-gray-300">
           <swiper-container #swiper>
+            @for (img of reality.images; track $index) {
             <swiper-slide>
               <img
-                src="https://via.placeholder.com/1200x1200"
+                [ngSrc]="img | imagePath"
                 width="300"
                 height="300"
+                [priority]="$index === 0"
                 alt="Property Image 1"
-                class="rounded-lg w-full object-cover max-h-96 hover:opacity-75 cursor-pointer"
-                onerror="this.onerror=null; this.src='https://via.placeholder.com/200x150';"
-              />
+                class="rounded-lg w-full object-contain max-h-96 cursor-pointer" />
             </swiper-slide>
-            <swiper-slide>
-              <img
-                src="https://via.placeholder.com/1200x1200"
-                width="300"
-                height="300"
-                alt="Property Image 1"
-                class="rounded-lg w-full object-cover max-h-96 hover:opacity-75 cursor-pointer"
-                onerror="this.onerror=null; this.src='https://via.placeholder.com/200x150';"
-              />
-            </swiper-slide>
-            <swiper-slide>
-              <img
-                src="https://via.placeholder.com/1200x1200"
-                width="300"
-                height="300"
-                alt="Property Image 1"
-                class="rounded-lg w-full object-cover max-h-96 hover:opacity-75 cursor-pointer"
-                onerror="this.onerror=null; this.src='https://via.placeholder.com/200x150';"
-              />
-            </swiper-slide>
+            }
           </swiper-container>
         </div>
 
         <div class="bg-white p-4 flex flex-col flex-1">
           <div class="flex justify-between">
             <div class="flex flex-col">
-              <h2 class="text-4xl">Title</h2>
-              <p class="text-3xl text-gray-700">Location</p>
-              <p class="text-4xl text-gray-900">4 444 4444 Kč</p>
+              <h2 class="text-4xl">{{ reality | realityName }}</h2>
+              <p class="text-3xl text-gray-700">{{ reality.location | realityLocation }}</p>
+              <p class="text-4xl text-gray-900">{{ reality.price | currency : "CZK" : "symbol" : "1.0-0" }}</p>
             </div>
             <div class="flex h-fit justify-center items-center">
-              <span class="bg-red-500 text-white px-3 py-1 my-2 rounded-full"
-                >Power tag</span
-              >
+              <span
+                [ngClass]="reality.energy_consumption | energyColorCode"
+                class="text-black px-3 py-1 my-2 rounded-full">
+                {{ reality.energy_consumption }}
+              </span>
             </div>
           </div>
 
           <div class="mt-4 mb-6">
-            <p class="text-gray-600">
-              Custom info about property very long text... Lorem ipsum dolor sit
-              amet consectetur adipisicing elit. Cum ad fugiat quo iusto a,
-              ipsum sint asperiores deserunt quia, deleniti reiciendis ipsam
-              pariatur iste molestiae voluptatibus praesentium odio incidunt
-              quam. Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-              Expedita, a optio adipisci in fugit sapiente recusandae eveniet
-              eos rerum qui veritatis esse consectetur deserunt animi, veniam
-              perferendis, dolore temporibus molestias?
+            <p class="text-gray-600 text-lg">
+              {{ reality.info }}
             </p>
           </div>
           <div class="mt-auto">
-            <div
-              class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-2 border-t pt-4"
-            >
+            <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-2 border-t pt-4">
               <div class="border-b p-1">
                 <div class="flex justify-between">
                   <strong>Celková cena:</strong>
-                  <span class="text-red-600">4 444 444 Kč</span>
+                  <span class="text-black">{{ reality.price | currency : "CZK" : "symbol" : "1.0-0" }}</span>
                 </div>
               </div>
               <div class="border-b p-1">
                 <div class="flex justify-between">
-                  <strong>Parkování:</strong>
-                  <span class="text-green-500">&#10004;</span>
+                  <strong>Vlastnictví:</strong>
+                  <span class="text-black capitalize">{{ reality.ownership_type }}</span>
                 </div>
               </div>
               <div class="border-b p-1">
                 <div class="flex justify-between">
-                  <strong>Parkování:</strong>
-                  <span class="text-green-500">&#10004;</span>
+                  <strong>Podlaží:</strong>
+                  <span class="text-black capitalize">{{ reality.floor }}</span>
+                </div>
+              </div>
+              <div class="border-b p-1">
+                <div class="flex justify-between">
+                  <strong>Užitná plocha:</strong>
+                  <span class="text-black capitalize">{{ reality.area + "m²" }}</span>
+                </div>
+              </div>
+              <div class="border-b p-1">
+                <div class="flex justify-between">
+                  <strong>Stavba:</strong>
+                  <span class="text-black capitalize">{{ reality.building_material }}</span>
+                </div>
+              </div>
+              <div class="border-b p-1">
+                <div class="flex justify-between">
+                  <strong>Stav objektu:</strong>
+                  <span class="text-black capitalize">{{ reality.condition }}</span>
                 </div>
               </div>
             </div>
 
             <div class="bg-white p-4 flex items-center space-x-4">
-              <div
-                class="w-16 h-16 justify-center flex items-center rounded-full bg-gray-100"
-              >
-                <fa-icon [icon]="icons.user" size="2xl"></fa-icon>
+              <div class="w-16 h-16 justify-center flex items-center rounded-full bg-gray-100">
+                <fa-icon
+                  [icon]="icons.user"
+                  size="2xl"></fa-icon>
               </div>
 
               <div class="flex flex-col">
-                <h3
-                  class="text-xl font-semibold text-red-600 hover:text-red-800 cursor-pointer"
-                >
-                  Simon Lukavský
+                <h3 class="text-xl font-semibold text-red-600 hover:text-red-800 cursor-pointer">
+                  <span class="text-gray-700">{{ reality.user.surname }} {{ reality.user.name }}</span>
                 </h3>
-                <div class="flex gap-2 items-baseline">
-                  <fa-icon
-                    class="text-gray-400"
-                    [icon]="icons.phone"
-                    size="lg"
-                  ></fa-icon>
-                  <span
-                    class="flex items-center text-red-600 hover:text-red-800 cursor-pointer"
-                  >
-                    777 123 456
-                  </span>
-                </div>
+
                 <div class="flex gap-2 items-baseline">
                   <fa-icon
                     class="text-gray-400"
                     [icon]="icons.email"
-                    size="lg"
-                  ></fa-icon>
+                    size="lg"></fa-icon>
                   <span class="text-red-600 hover:text-red-800 cursor-pointer">
-                    {{ "test@nbazar.cz" }}
+                    {{ reality.user.email }}
                   </span>
                 </div>
               </div>
             </div>
             <div class="flex justify-start gap-2 mt-4">
               <button
-                (click)="testStar = !testStar"
+                (click)="toggleFavorite(reality.uuid)"
                 class="btn-primary items-center gap-1 inline-flex"
-                [ngClass]="{ ' bg-orange-300 hover:bg-orange-400': testStar }"
-              >
+                [ngClass]="{ 'bg-orange-300 hover:bg-orange-400': reality.uuid | favoriteReality : onWatchedChange }">
                 <fa-icon
-                  [ngClass]="{ ' text-black': testStar }"
+                  [ngClass]="{ 'text-black': reality.uuid | favoriteReality : onWatchedChange }"
                   class="text-gray-400"
                   [icon]="icons.star"
-                  size="lg"
-                ></fa-icon>
-                <span>{{
-                  testStar ? "Obebrat z oblíbených " : "Přidat do oblíbených"
-                }}</span>
+                  size="lg"></fa-icon>
+                <span>
+                  {{
+                    (reality.uuid | favoriteReality : onWatchedChange)
+                      ? "Obebrat z oblíbených "
+                      : "Přidat do oblíbených"
+                  }}
+                </span>
               </button>
-              <button class="flex btn-primary items-center gap-1">
+              <button
+                class="flex btn-primary items-center gap-1"
+                (click)="shareLink()">
                 <fa-icon
                   class="text-gray-400"
                   [icon]="icons.share"
-                  size="lg"
-                ></fa-icon>
+                  size="lg"></fa-icon>
                 <span>Sdílet</span>
               </button>
             </div>
           </div>
         </div>
+
+        } @else {
+        <div class="flex justify-center items-center flex-1">
+          <fa-icon
+            size="4x"
+            [icon]="icons.loading"
+            [spin]="true"></fa-icon>
+        </div>
+        }
       </div>
     </div>
   </div>

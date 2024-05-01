@@ -1,23 +1,25 @@
 <div class="flex flex-row w-screen h-screen">
   <!-- Left Column for the Image -->
-  <div class="hidden lg:block lg:w-1/3">
+  <div class="hidden lg:block">
     <img
-      class="object-cover w-auto h-auto"
+      class="object-cover w-full h-full"
       src="https://placehold.co/800x1200"
-      alt="Placeholder Image"
-    />
+      alt="Placeholder Image" />
   </div>
 
   <!-- Right Column for the Login Form -->
-  <div class="flex-1 flex justify-center items-center lg:w-2/3">
+  <div class="flex-1 flex justify-center items-center lg:w-2/3 p-4">
     <form
-      class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 w-1/2"
+      class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 w-full lg:w-1/2"
       [ngClass]="{ 'blur-sm ': loading$ | async }"
       [formGroup]="form"
-      (ngSubmit)="onSubmit()"
-    >
-      <div class="mb-4" [formGroup]="form">
-        <label class="block text-gray-700 text-base font-bold mb-2" for="email">
+      (ngSubmit)="onSubmit()">
+      <div
+        class="mb-4"
+        [formGroup]="form">
+        <label
+          class="block text-gray-700 text-base font-bold mb-2"
+          for="email">
           Emailová adresa
         </label>
         <input
@@ -30,20 +32,19 @@
             'border-red-500': email.invalid && email.touched,
             'border-green-500': email.valid && email.touched
           }"
-          required
-        />
+          required />
         <div
           *ngIf="email.errors && email.touched"
-          class="text-red-500 text-xs italic mt-1"
-        >
+          class="text-red-500 text-xs italic mt-1">
           Prosím zadejte platnou emailovou adresu.
         </div>
       </div>
-      <div class="mb-6" [formGroup]="form">
+      <div
+        class="mb-6"
+        [formGroup]="form">
         <label
           class="block text-gray-700 text-base font-bold mb-2"
-          for="password"
-        >
+          for="password">
           Heslo
         </label>
         <input
@@ -56,37 +57,31 @@
             'border-red-500': password.invalid && password.touched,
             'border-green-500': password.valid && password.touched
           }"
-          required
-        />
+          required />
         <div
           *ngIf="password.errors && password.touched"
-          class="text-red-500 text-xs italic mt-1"
-        >
+          class="text-red-500 text-xs italic mt-1">
           Heslo zmrde.
         </div>
       </div>
       @if (error$ | async) {
       <div
         class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4"
-        role="alert"
-      >
+        role="alert">
         <strong class="font-bold">Je to zmrdka!</strong>
         <span
           class="absolute top-0 bottom-0 right-0 px-4 py-3"
-          (click)="clearError()"
-        >
+          (click)="clearError()">
           <svg
             class="fill-current h-6 w-6 text-red-500"
             role="button"
             xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 20 20"
-          >
+            viewBox="0 0 20 20">
             <title>Zavřít</title>
             <path
               fill-rule="evenodd"
               d="M14.95 5.05a.75.75 0 010 1.06l-4.89 4.89 4.89 4.89a.75.75 0 11-1.06 1.06l-4.89-4.89-4.89 4.89a.75.75 0 01-1.06-1.06l4.89-4.89-4.89-4.89a.75.75 0 011.06-1.06l4.89 4.89 4.89-4.89a.75.75 0 011.06 0z"
-              clip-rule="evenodd"
-            ></path>
+              clip-rule="evenodd"></path>
           </svg>
         </span>
       </div>
@@ -97,17 +92,17 @@
             'opacity-50 cursor-not-allowed': form.invalid || (loading$ | async)
           }"
           [disabled]="form.invalid || (loading$ | async)"
-          class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 w-full rounded focus:outline-none focus:shadow-outline"
-        >
+          class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 w-full rounded focus:outline-none focus:shadow-outline">
           Prihlásit se
         </button>
+      </div>
+      <div class="text-right mt-4">
+        <span class="text-blue-500 hover:text-blue-700 cursor-pointer">Zapomenuté heslo?</span>
       </div>
     </form>
     @if ( loading$ | async ) {
     <div class="flex justify-center items-center absolute">
-      <div
-        class="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-blue-500"
-      ></div>
+      <div class="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-blue-500"></div>
     </div>
     }
   </div>

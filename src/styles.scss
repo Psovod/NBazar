@@ -6,6 +6,27 @@
     .btn-primary {
         @apply px-4 py-2 bg-gray-100 text-sm rounded-md hover:bg-gray-200 focus:outline-none;
     }
+
+    .btn-danger {
+        @apply px-4 py-2 bg-red-500 text-sm text-white rounded-md hover:bg-red-600 focus:outline-none;
+    }
+
+    :disabled {
+        @apply opacity-50 cursor-not-allowed;
+    }
+
+    .input-primary {
+        @apply px-4 py-2 bg-gray-100 text-base rounded-md focus:outline-none capitalize;
+    }
+
+
+    .input-primary.ng-invalid.ng-touched {
+        @apply border border-red-500;
+    }
+
+    .input-primary.ng-valid {
+        @apply border border-green-500;
+    }
 }
 
 /**
@@ -14,30 +35,23 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 :root {
-    --building-color: #FF9800;
-    --house-color: #0288D1;
-    --shop-color: #7B1FA2;
-    --warehouse-color: #558B2F;
+    --domy-color: #FF9800;
+    --byty-color: #ac101d;
+    --pozemky-color: #7B1FA2;
+    --komercni-color: #558B2F;
+    --ostatni-color: #262626;
 }
 
-/*
-   * Optional: Makes the sample page fill the window.
-   */
-html,
-body {
-    height: 100%;
-    margin: 0;
-    padding: 0;
-}
+// /*
+//    * Optional: Makes the sample page fill the window.
+//    */
+// html,
+// body {
+//     height: 100%;
+//     margin: 0;
+//     padding: 0;
+// }
 
-/*
-   * Always set the map height explicitly to define the size of the div element
-   * that contains the map.
-   */
-#map {
-    height: 100%;
-    width: 100%;
-}
 
 /*
    * Property styles in unhighlighted state.
@@ -45,25 +59,26 @@ body {
 .property {
     align-items: center;
     background-color: #FFFFFF;
-    border-radius: 10%;
+    border-radius: 50%;
     color: #263238;
     display: flex;
     font-size: 14px;
     gap: 15px;
-    height: 30px;
+    height: 38px;
     justify-content: center;
     padding: 4px;
     position: relative;
-    position: relative;
     transition: all 0.3s ease-out;
-    width: 30px;
+    width: 38px;
+}
+
+.property.selected {
+    height: 60px;
+    width: 60px;
 }
 
 .property::after {
-    border-left: 9px solid transparent;
-    border-right: 9px solid transparent;
-    border-top: 9px solid #FFFFFF;
-    content: "";
+
     height: 0;
     left: 50%;
     position: absolute;
@@ -86,6 +101,8 @@ body {
     width: auto;
 }
 
+
+
 .property .details {
     display: none;
     flex-direction: column;
@@ -99,23 +116,6 @@ body {
     margin-top: 5px;
 }
 
-.property .features {
-    align-items: flex-end;
-    display: flex;
-    flex-direction: row;
-    gap: 10px;
-}
-
-.property .features>div {
-    align-items: center;
-    background: #F5F5F5;
-    border-radius: 5px;
-    border: 1px solid #ccc;
-    display: flex;
-    font-size: 10px;
-    gap: 5px;
-    padding: 5px;
-}
 
 /*
    * Property styles in highlighted state.
@@ -125,7 +125,7 @@ body {
     border-radius: 8px;
     box-shadow: 10px 10px 5px rgba(0, 0, 0, 0.2);
     height: 80px;
-    padding: 8px 15px;
+    padding: 0px 10px;
     width: auto;
 }
 
@@ -137,79 +137,91 @@ body {
     display: flex;
 }
 
+.property .image {
+    display: none;
+    /* Initially hide the image */
+}
+
 .property.highlight .icon svg {
     width: 50px;
     height: 50px;
 }
 
-.property .bed {
-    color: #FFA000;
+.property.highlight .image {
+    display: flex;
+    /* Show the image */
 }
 
-.property .bath {
-    color: #03A9F4;
+.property.highlight .image img {
+    height: 50px;
+    width: auto;
+    border-radius: 10px
 }
 
-.property .size {
-    color: #388E3C;
+.property.highlight .iconka {
+    display: none;
+    /* Hide the icon */
 }
 
 /*
    * House icon colors.
    */
-.property.highlight:has(.fa-house) .icon {
-    color: var(--house-color);
+.property.highlight:has(.type-byty) .icon {
+    color: var(--byty-color);
 }
 
-.property:not(.highlight):has(.fa-house) {
-    background-color: var(--house-color);
+.property:not(.highlight):has(.type-byty) {
+    background-color: var(--byty-color);
 }
 
-.property:not(.highlight):has(.fa-house)::after {
-    border-top: 9px solid var(--house-color);
+.property:not(.highlight):has(.type-byty)::after {
+    border-top: 9px solid var(--byty-color);
 }
 
-/*
-   * Building icon colors.
-   */
-.property.highlight:has(.fa-building) .icon {
-    color: var(--building-color);
+.property.highlight:has(.type-domy) .icon {
+    color: var(--domy-color);
 }
 
-.property:not(.highlight):has(.fa-building) {
-    background-color: var(--building-color);
+.property:not(.highlight):has(.type-domy) {
+    background-color: var(--domy-color);
 }
 
-.property:not(.highlight):has(.fa-building)::after {
-    border-top: 9px solid var(--building-color);
+.property:not(.highlight):has(.type-domy)::after {
+    border-top: 9px solid var(--domy-color);
 }
 
-/*
-   * Warehouse icon colors.
-   */
-.property.highlight:has(.fa-warehouse) .icon {
-    color: var(--warehouse-color);
+.property.highlight:has(.type-pozemky) .icon {
+    color: var(--pozemky-color);
 }
 
-.property:not(.highlight):has(.fa-warehouse) {
-    background-color: var(--warehouse-color);
+.property:not(.highlight):has(.type-pozemky) {
+    background-color: var(--pozemky-color);
 }
 
-.property:not(.highlight):has(.fa-warehouse)::after {
-    border-top: 9px solid var(--warehouse-color);
+.property:not(.highlight):has(.type-pozemky)::after {
+    border-top: 9px solid var(--pozemky-color);
 }
 
-/*
-   * Shop icon colors.
-   */
-.property.highlight:has(.fa-shop) .icon {
-    color: var(--shop-color);
+.property.highlight:has(.type-komercni) .icon {
+    color: var(--komercni-color);
 }
 
-.property:not(.highlight):has(.fa-shop) {
-    background-color: var(--shop-color);
+.property:not(.highlight):has(.type-komercni) {
+    background-color: var(--komercni-color);
 }
 
-.property:not(.highlight):has(.fa-shop)::after {
-    border-top: 9px solid var(--shop-color);
+.property:not(.highlight):has(.type-komercni)::after {
+    border-top: 9px solid var(--komercni-color);
+}
+
+.property.highlight:has(.type-ostatni) .icon {
+    color: var(--ostatni-color);
+}
+
+.property:not(.highlight):has(.type-ostatni) {
+    background-color: var(--ostatni-color);
+}
+
+.property:not(.highlight):has(.type-ostatni)::after {
+    border-top: 9px solid var(--ostatni-color);
 }

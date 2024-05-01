@@ -10,7 +10,6 @@ import {
 } from '@angular/router';
 import { AuthService } from './shared/auth/auth.service';
 import { HeaderComponent } from './shared/header/header.component';
-import { UserService } from './user/services/user.service';
 import { register } from 'swiper/element/bundle';
 register();
 @Component({
@@ -22,11 +21,7 @@ register();
 })
 export class AppComponent {
   public loaderActive = true;
-  constructor(
-    private router: Router,
-    private auth: AuthService,
-    private user: UserService
-  ) {
+  constructor(private router: Router, private auth: AuthService) {
     this.auth.checkLocalStorage();
     this.router.events.subscribe((event) => {
       if (event instanceof NavigationStart) {
@@ -47,9 +42,5 @@ export class AppComponent {
         this.loaderActive = false;
       }
     });
-  }
-  ngOnInit(): void {
-    this.auth.test();
-    this.user.test();
   }
 }

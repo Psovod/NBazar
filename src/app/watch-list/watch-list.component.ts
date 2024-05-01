@@ -1,42 +1,54 @@
 import { CommonModule, NgOptimizedImage } from '@angular/common';
-import { Component } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { Component, inject } from '@angular/core';
+import { BehaviorSubject, Subject, take } from 'rxjs';
+import { ApiService } from '../shared/api/api.service';
+import { Reality, RealityListConfig } from '../shared/reality-list/types';
+import { RealityListComponent } from '../shared/reality-list/reality-list.component';
+import { AuthService } from '../shared/auth/auth.service';
+import { Pagination, PaginationComponent } from '../shared/components/pagination/pagination.component';
 
 @Component({
   selector: 'app-watch-list',
   standalone: true,
-  imports: [CommonModule, NgOptimizedImage],
+  imports: [CommonModule, NgOptimizedImage, RealityListComponent, PaginationComponent],
   templateUrl: './watch-list.component.html',
   styleUrl: './watch-list.component.scss',
 })
 export class WatchListComponent {
-  public loading$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(
-    false
-  );
-  public realityList: any[] = [
-    {
-      name: 'Byt 2+1',
-      price: 1000000,
-      location: 'Praha',
-      image: 'https://via.placeholder.com/150',
-    },
-    {
-      name: 'Byt 2+1',
-      price: 1000000,
-      location: 'Praha',
-      image: 'https://via.placeholder.com/150',
-    },
-    {
-      name: 'Byt 2+1',
-      price: 1000000,
-      location: 'Praha',
-      image: 'https://via.placeholder.com/150',
-    },
-  ];
+  public loading$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+  public realityList$: Subject<Array<Reality>> = new Subject<Array<Reality>>();
+  public config: RealityListConfig = { canDelete: false, canEdit: false, canFavorite: true };
+  public pagination: Pagination = {
+    currentPage: 1,
+    itemsPerPage: 10,
+    totalItems: 0,
+    lastPage: 0,
+  };
+  private api = inject(ApiService);
+  private auth = inject(AuthService);
   ngOnInit(): void {
+    this.handleLoad(this.pagination);
+  }
+  onPageChange(pagination: Pagination) {
+    this.handleLoad(pagination);
+  }
+  handleLoad(pagination: Pagination) {
     this.loading$.next(true);
-    setTimeout(() => {
-      this.loading$.next(false);
-    }, 2000);
+    this.api
+      .get<Array<Reality>>(
+        `user/favorites/${this.auth.user?.id}?limit=${pagination.itemsPerPage}&page=${pagination.currentPage}`
+      )
+      .pipe(take(1))
+      .subscribe({
+        next: (res) => {
+          this.realityList$.next(res);
+        },
+        error: (err) => {
+          throw new Error(err);
+        },
+        complete: () => {
+          this.loading$.next(false);
+        },
+      });
   }
 }

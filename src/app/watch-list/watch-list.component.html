@@ -3,48 +3,14 @@
   <div class="text-gray-600 mb-2">Seznam všech realit, které sledujete.</div>
 
   <div class="divide-y divide-gray-200">
-    @if (!(loading$ | async)) { @if (realityList.length) {@for (reality of
-    realityList; track $index) {
-    <div class="flex items-center justify-between p-4">
-      <div class="flex items-center space-x-3">
-        <img
-          [ngSrc]="reality.image"
-          width="150"
-          height="150"
-          class="h-10 w-20 rounded"
-        />
-        <div>
-          <div class="font-medium">{{ reality.name }}</div>
-          <div class="text-sm text-gray-600">{{ reality.location }}</div>
-        </div>
-      </div>
-      <div class="flex items-center space-x-3">
-        <button
-          class="px-4 py-2 bg-gray-100 text-sm rounded-md hover:bg-gray-200"
-        >
-          Zobrazit
-        </button>
-      </div>
-    </div>
-    } } @else {
-    <div class="p-4 text-center text-gray-600">
-      Nemáte žádné sledovane reality.
-    </div>
-    }}@else { @for (item of [1,2,3,4,5]; track $index) {
-
-    <div class="animate-pulse flex items-center justify-between p-4">
-      <div class="flex items-center space-x-3">
-        <div class="h-10 w-20 bg-gray-300 rounded"></div>
-        <div>
-          <div class="h-4 bg-gray-300 rounded w-24 mb-2"></div>
-          <div class="h-4 bg-gray-300 rounded w-16"></div>
-        </div>
-      </div>
-      <div class="flex items-center space-x-3">
-        <div class="px-4 py-2 bg-gray-300 rounded-md w-20 h-10"></div>
-        <div class="px-4 py-2 bg-gray-300 rounded-md w-20 h-10"></div>
-      </div>
-    </div>
-    } }
+    <reality-list
+      [config]="config"
+      [realityList]="realityList$ | async"
+      [loading$]="loading$"></reality-list>
+    @if ((realityList$ | async)?.length) {
+    <custom-pagination
+      [pagination]="pagination"
+      (onPageChange)="onPageChange($event)"></custom-pagination>
+    }
   </div>
 </div>

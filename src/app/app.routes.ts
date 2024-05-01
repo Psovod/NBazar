@@ -11,6 +11,7 @@ import { AdminGuard } from './guards/admin.guard';
 import { SearchComponent } from './search/search.component';
 import { SearchResultComponent } from './search/search-result/search-result.component';
 import { WatchListComponent } from './watch-list/watch-list.component';
+import { RegisterComponent } from './register/register.component';
 
 export const routes: Routes = [
   {
@@ -22,6 +23,10 @@ export const routes: Routes = [
     path: 'login',
     component: LoginComponent,
     canActivate: [LoginGuard],
+  },
+  {
+    path: 'registrace',
+    component: RegisterComponent,
   },
   {
     path: 'admin',
@@ -48,7 +53,7 @@ export const routes: Routes = [
     component: DashboardComponent,
   },
   {
-    path: 'reality/:id',
+    path: 'reality/:uuid',
     component: RealityComponent,
   },
   {

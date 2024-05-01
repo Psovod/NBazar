@@ -1,18 +1,15 @@
 export interface Auth {
-  id: number | null;
+  user: User | null;
   isAuthenticated: boolean;
   authorization: Authorization | null;
 }
+export interface User {
+  id: number;
+  name: string;
+  surname: string;
+  email: string;
+  watched_estates?: Array<string>;
+}
 export interface Authorization {
-  accessToken: {
-    name: string;
-    abilities: Array<string>;
-    expires_at: string;
-    tokenable_id: number;
-    tokenable_type: string;
-    updated_at: Date;
-    created_at: Date;
-    id: number;
-  };
-  plainTextToken: any;
+  accessToken: string;
 }

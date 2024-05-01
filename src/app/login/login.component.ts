@@ -1,17 +1,12 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
-import {
-  FormControl,
-  FormGroup,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
-import { Subject, pipe } from 'rxjs';
+import { Component, inject } from '@angular/core';
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Subject } from 'rxjs';
 import { ApiService } from '../shared/api/api.service';
-import { Authorization } from '../shared/auth/types';
 import { AuthService } from '../shared/auth/auth.service';
-import { UserService } from '../user/services/user.service';
 import { take } from 'rxjs/operators';
+import { User } from '../shared/auth/types';
+import { UserService } from '../shared/auth/user.service';
 
 @Component({
   selector: 'app-login',
@@ -21,11 +16,9 @@ import { take } from 'rxjs/operators';
   styleUrl: './login.component.scss',
 })
 export class LoginComponent {
-  constructor(
-    private api: ApiService,
-    private auth: AuthService,
-    private user: UserService
-  ) {}
+  private api = inject(ApiService);
+  private auth = inject(AuthService);
+  private user = inject(UserService);
   public get email() {
     return this.form.controls['email'];
   }
@@ -44,14 +37,16 @@ export class LoginComponent {
   public onSubmit(): void {
     this.loading$.next(true);
     this.api
-      .post<Authorization>('/login', this.form.value)
+      .post<string>('user/login', this.form.value)
       .pipe(take(1))
       .subscribe({
         next: async (response) => {
-          await this.auth.login(response);
+          await this.auth.login({
+            accessToken: response,
+          });
           const form = this.form.value;
           delete form.password;
-          this.user.settings = form;
+          await this.user.get();
           this.loading$.next(false);
           this.form.reset();
         },

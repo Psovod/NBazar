@@ -7,22 +7,19 @@ import {
   Type,
   createComponent,
 } from '@angular/core';
-import { ModalComponent } from '../components/modal/modal.component';
 import { Observable } from 'rxjs';
+import { RealityCreateConfig, RealityCreateFormValues } from '../../reality/reality-create/types';
 
 @Injectable()
 export class ModalService {
   private dialogRef: ComponentRef<any> | null = null;
-  constructor(
-    private appRef: ApplicationRef,
-    private injector: EnvironmentInjector,
-    private componentFactoryResolver: ComponentFactoryResolver
-  ) {}
+  constructor(private appRef: ApplicationRef, private injector: EnvironmentInjector) {}
 
   open<T>(
     component: Type<T>,
     title: string,
-    content: string
+    content?: Array<RealityCreateFormValues>,
+    config?: RealityCreateConfig
   ): Observable<boolean> {
     this.dialogRef = createComponent(component, {
       environmentInjector: this.injector,
@@ -30,6 +27,7 @@ export class ModalService {
     this.dialogRef.instance.dialogRef = this.dialogRef;
     this.dialogRef.instance.title = title;
     this.dialogRef.instance.content = content;
+    this.dialogRef.instance.config = config;
 
     document.body.appendChild(this.dialogRef.location.nativeElement);
 

@@ -1,13 +1,10 @@
-<div
-  class="container max-w-5xl m-auto my-4 p-5 border border-gray-300 rounded-lg"
->
+<div class="container max-w-5xl m-auto my-4 p-5 border border-gray-300 rounded-lg">
   <div class="flex justify-between items-center mb-4">
     <h1 class="text-3xl font-bold capitalize">
       <custom-dropdown
         [label]="query"
         [items]="dropDownItems"
-        (onItemSelected)="onItemSelected($event)"
-      ></custom-dropdown>
+        (onItemSelected)="onItemSelected($event)"></custom-dropdown>
     </h1>
 
     <div>
@@ -15,41 +12,47 @@
       <button
         (click)="onTypeClick(type)"
         [disabled]="type.active"
-        [ngClass]="{ 'bg-red-500 !text-white ': type.active }"
-        class="text-gray-700 px-3 py-1 rounded-full font-bold"
-      >
+        [ngClass]="{
+          'bg-red-500 !text-white opacity-100 cursor-pointer': type.active
+        }"
+        class="text-gray-700 px-3 py-1 rounded-full font-bold">
         {{ type.name }}
       </button>
       }
     </div>
   </div>
+
   @for (filter of activeFilters; track $index) { @if (!filter.hidden) {
 
-  <h2 class="font-semibold text-lg capitalize mb-1">{{ filter.type }}</h2>
-  <div class="grid grid-cols-4 md:grid-cols-3">
-    @switch (filter.inputType) { @case ('checkbox') { @for (item of
-    filter.filters; track $index) {
+  <h2 class="font-semibold text-lg capitalize mb-1">{{ filter.name }}</h2>
+  <div class="grid grid-cols-3 md:grid-cols-4">
+    @switch (filter.inputType) { @case ('checkbox') { @for (item of filter.filters; track $index) {
     <custom-checkbox
       (onChangeCheckBox)="onCheckboxChange($event)"
-      [item]="item"
-    ></custom-checkbox>
+      [item]="item"></custom-checkbox>
     } } @case ('range') { @for (item of filter.filters; track $index) {
     <input
       type="number"
       placeholder="{{ item.name }}"
       [(ngModel)]="item.value"
-      class="border border-gray-300 rounded-md p-2 m-2 focus:outline-none focus:ring focus:ring-red-500"
-    />
+      class="border border-gray-300 rounded-md p-2 m-2 focus:outline-none focus:ring focus:ring-red-500" />
 
     } } @case ('dropdown') {
     <select
       class="border border-gray-300 rounded-md bg-white p-2 m-2 focus:outline-none focus:ring focus:ring-red-500"
-      [(ngModel)]="filter.filters[0].value"
-    >
-      <option *ngFor="let item of filter.filters[0].options" [value]="item">
-        {{ item }}
+      [(ngModel)]="filter.filters[0].value">
+      <option
+        *ngFor="let item of filter.filters[0].options"
+        [value]="item.value">
+        {{ item.name }}
       </option>
     </select>
+    } @case ('input') {
+    <input
+      type="text"
+      placeholder="{{ filter.filters[0].name }}"
+      [(ngModel)]="filter.filters[0].value"
+      class="border border-gray-300 rounded-md p-2 m-2 focus:outline-none focus:ring focus:ring-red-500" />
     }}
   </div>
   } }
@@ -57,8 +60,7 @@
   <div class="flex justify-end">
     <button
       (click)="search()"
-      class="bg-red-600 text-white px-6 py-2 rounded-md font-bold"
-    >
+      class="bg-red-600 text-white px-6 py-2 rounded-md font-bold">
       Zobrazit 18 720 inzerátů
     </button>
   </div>

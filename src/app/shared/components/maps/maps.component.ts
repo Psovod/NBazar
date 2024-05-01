@@ -1,8 +1,13 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
-import { GoogleMapsModule, MapAdvancedMarker } from '@angular/google-maps';
-import { Custom } from '../../../search/search-result/search-result.component';
+import { Component, QueryList, ViewChild, ViewChildren, inject } from '@angular/core';
+import { GoogleMap, GoogleMapsModule, MapAdvancedMarker } from '@angular/google-maps';
 import { Subject } from 'rxjs';
+import { REAL_ESTATE_TYPE } from '../../constants';
+import { MapsService } from './services/maps.service';
+import { MarkerElementOptions, RealityMarker } from './types';
+import { RealityLocationPipe } from '../../../search/search-result/pipes/reality-location.pipe';
+import { Reality } from '../../reality-list/types';
+import { ImagePathPipe } from '../../pipes/image-path.pipe';
 
 @Component({
   selector: 'app-maps',
@@ -12,199 +17,124 @@ import { Subject } from 'rxjs';
   styleUrl: './maps.component.scss',
 })
 export class MapsComponent {
-  center: google.maps.LatLngLiteral = { lat: 37.5, lng: -122.2 };
-  zoom = 8;
+  @ViewChildren('advancedMarker') advancedMarkers!: QueryList<MapAdvancedMarker>;
+  @ViewChild(GoogleMap, { static: false }) googleMap!: GoogleMap;
+  private maps = inject(MapsService);
+  center: google.maps.LatLngLiteral = { lat: 50.0755, lng: 14.4378 };
+  zoom = 14;
   mapId = '12ed74020bbac09f';
-  markers$: Subject<Custom[]> = new Subject<Custom[]>();
-  addMarker(event: google.maps.MapMouseEvent): void {}
-  updatePosition(
-    event: google.maps.MapMouseEvent,
-    position: Custom,
-    advancedMarker: MapAdvancedMarker
-  ): void {}
-  toggleHighlight(position: Custom): void {}
+  markers$: Subject<Array<RealityMarker>> = new Subject<Array<RealityMarker>>();
   ngOnInit(): void {
     this.init();
   }
+
+  public selectReality(id: string) {
+    this.advancedMarkers.forEach((marker) => {
+      marker.advancedMarker.querySelector('.property')?.classList.remove('selected');
+      marker.zIndex = 0;
+      if (marker.advancedMarker.title === id) {
+        this.maps.select(this.maps.list.find((reality) => reality.uuid === id) || null);
+        marker.zIndex = 1;
+        marker.advancedMarker.querySelector('.property')?.classList.add('selected');
+        this.googleMap.panTo(marker.advancedMarker.position as google.maps.LatLngLiteral);
+        this.googleMap.zoom = 16;
+      }
+    });
+  }
   async init() {
     await google.maps.importLibrary('marker');
-    let markers = [];
-    for (const property of this.properties) {
-      const AdvancedMarkerElement = {
-        content: this.buildContent(property),
+    let markers: Array<RealityMarker> = [];
+    if (!this.maps.list) {
+      return;
+    }
+    for (const reality of this.maps.list) {
+      const AdvancedMarkerElement: MarkerElementOptions = {
+        content: this.buildContent(reality),
         options: {
-          gmpDraggable: true,
+          gmpDraggable: false,
         },
-        position: property.position,
-        title: property.description,
+        position: reality.location.coordinates,
+        title: reality.uuid,
       };
 
-      markers.push({ marker: AdvancedMarkerElement, property: property });
+      markers.push({
+        marker: AdvancedMarkerElement,
+        reality,
+      });
     }
     this.markers$.next(markers);
   }
-  buildContent(property: any) {
+  public markerInitialized(marker: MapAdvancedMarker, id: string) {
+    if (this.maps.id === id) {
+      marker.zIndex = 1;
+      marker.advancedMarker.querySelector('.property')?.classList.add('selected');
+      this.googleMap.panTo(marker.advancedMarker.position as google.maps.LatLngLiteral);
+      this.googleMap.zoom = 16;
+    }
+    marker.advancedMarker.addEventListener('mouseenter', () => {
+      marker.advancedMarker.querySelector('.property')?.classList.add('highlight');
+    });
+    marker.advancedMarker.addEventListener('mouseleave', () => {
+      marker.advancedMarker.querySelector('.property')?.classList.remove('highlight');
+    });
+  }
+  private buildContent(reality: Reality) {
     const content = document.createElement('div');
     content.classList.add('property');
     content.innerHTML = `
-      <div class="icon">
-          <i aria-hidden="true" class="fa fa-icon fa-${property.type}" title="${property.type}"></i>
-          <span class="fa-sr-only">${property.type}</span>
-      </div>
-      <div class="details">
-          <div class="price">${property.price}</div>
-          <div class="address">${property.address}</div>
-          <div class="features">
-          <div>
-              <i aria-hidden="true" class="fa fa-bed fa-lg bed" title="bedroom"></i>
-              <span class="fa-sr-only">bedroom</span>
-              <span>${property.bed}</span>
+        <div class="icon">
+            <i aria-hidden="true"
+              class="iconka fa fa-icon ${this.getIcon(reality.type)} type-${this.removeDiacritics(reality.type)}"></i>
+            <span class="fa-sr-only">${reality.type}</span>
+          <div class="image">
+            <img
+              src="${ImagePathPipe.prototype.transform(reality.images?.[0]) || 'https://via.placeholder.com/150'}" 
+              alt="" />
           </div>
-          <div>
-              <i aria-hidden="true" class="fa fa-bath fa-lg bath" title="bathroom"></i>
-              <span class="fa-sr-only">bathroom</span>
-              <span>${property.bath}</span>
-          </div>
-          <div>
-              <i aria-hidden="true" class="fa fa-ruler fa-lg size" title="size"></i>
-              <span class="fa-sr-only">size</span>
-              <span>${property.size} ft<sup>2</sup></span>
-          </div>
-          </div>
-      </div>
-      `;
+        </div>
+        <div class="details">
+          <div class="price">${reality.price}</div>
+          <div class="price">${RealityLocationPipe.prototype.transform(reality.location)}</div>
+        </div>`;
+
     return content;
   }
-  properties = [
-    {
-      address: '215 Emily St, MountainView, CA',
-      description: 'Single family house with modern design',
-      price: 3000000,
-      type: 'home',
-      bed: 5,
-      bath: 4.5,
-      size: 300,
-      position: {
-        lat: 37.50024109655184,
-        lng: -122.28528451834352,
-      },
-    },
-    {
-      address: '108 Squirrel Ln &#128063;, Menlo Park, CA',
-      description: 'Townhouse with friendly neighbors',
-      price: 3000000,
-      type: 'building',
-      bed: 4,
-      bath: 3,
-      size: 200,
-      position: {
-        lat: 37.44440882321596,
-        lng: -122.2160620727,
-      },
-    },
-    {
-      address: '100 Chris St, Portola Valley, CA',
-      description: 'Spacious warehouse great for small business',
-      price: 3000000,
-      type: 'warehouse',
-      bed: 4,
-      bath: 4,
-      size: 800,
-      position: {
-        lat: 37.39561833718522,
-        lng: -122.21855116258479,
-      },
-    },
-    {
-      address: '98 Aleh Ave, Palo Alto, CA',
-      description: 'A lovely store on busy road',
-      price: 3000000,
-      type: 'store-alt',
-      bed: 2,
-      bath: 1,
-      size: 210,
-      position: {
-        lat: 37.423928529779644,
-        lng: -122.1087629822001,
-      },
-    },
-    {
-      address: '2117 Su St, MountainView, CA',
-      description: 'Single family house near golf club',
-      price: 3000000,
-      type: 'home',
-      bed: 4,
-      bath: 3,
-      size: 200,
-      position: {
-        lat: 37.40578635332598,
-        lng: -122.15043378466069,
-      },
-    },
-    {
-      address: '197 Alicia Dr, Santa Clara, CA',
-      description: 'Multifloor large warehouse',
-      price: 3000000,
-      type: 'warehouse',
-      bed: 5,
-      bath: 4,
-      size: 700,
-      position: {
-        lat: 37.36399747905774,
-        lng: -122.10465384268522,
-      },
-    },
-    {
-      address: '700 Jose Ave, Sunnyvale, CA',
-      description: '3 storey townhouse with 2 car garage',
-      price: 3000000,
-      type: 'building',
-      bed: 4,
-      bath: 4,
-      size: 600,
-      position: {
-        lat: 37.38343706184458,
-        lng: -122.02340436985183,
-      },
-    },
-    {
-      address: '868 Will Ct, Cupertino, CA',
-      description: 'Single family house in great school zone',
-      price: 3000000,
-      type: 'home',
-      bed: 3,
-      bath: 2,
-      size: 100,
-      position: {
-        lat: 37.34576403052,
-        lng: -122.04455090047453,
-      },
-    },
-    {
-      address: '655 Haylee St, Santa Clara, CA',
-      description: '2 storey store with large storage room',
-      price: 3000000,
-      type: 'store-alt',
-      bed: 3,
-      bath: 2,
-      size: 450,
-      position: {
-        lat: 37.362863347890716,
-        lng: -121.97802139023555,
-      },
-    },
-    {
-      address: '2019 Natasha Dr, San Jose, CA',
-      description: 'Single family house',
-      price: 3000000,
-      type: 'home',
-      bed: 4,
-      bath: 3.5,
-      size: 500,
-      position: {
-        lat: 37.41391636421949,
-        lng: -121.94592071575907,
-      },
-    },
-  ];
+  private getIcon(type: REAL_ESTATE_TYPE) {
+    switch (type) {
+      case REAL_ESTATE_TYPE.BYTY:
+        return 'fa-couch';
+      case REAL_ESTATE_TYPE.DOMY:
+        return 'fa-home';
+      case REAL_ESTATE_TYPE.KOMERCNI:
+        return 'fa-building';
+      case REAL_ESTATE_TYPE.POZEMKY:
+        return 'fa-location-dot';
+      case REAL_ESTATE_TYPE.OSTATNI:
+        return 'fa-box-open';
+    }
+  }
+  private removeDiacritics(value: string): string {
+    const diacritics: { [index: string]: string } = {
+      á: 'a',
+      č: 'c',
+      ď: 'd',
+      é: 'e',
+      ě: 'e',
+      í: 'i',
+      ň: 'n',
+      ó: 'o',
+      ř: 'r',
+      š: 's',
+      ť: 't',
+      ú: 'u',
+      ů: 'u',
+      ý: 'y',
+      ž: 'z',
+    };
+
+    return value
+      .split('')
+      .map((char) => diacritics[char] || char)
+      .join('');
+  }
 }

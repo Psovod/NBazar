@@ -1,5 +1,4 @@
-import { Component } from '@angular/core';
-import { UserService } from '../../user/services/user.service';
+import { Component, inject } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../auth/auth.service';
 import { CommonModule } from '@angular/common';
@@ -31,22 +30,20 @@ export class HeaderComponent {
     },
   ];
   public menuOpen: boolean = false;
-  constructor(
-    private userService: UserService,
-    private router: Router,
-    private auth: AuthService
-  ) {}
+  private auth = inject(AuthService);
+  private router = inject(Router);
   get name() {
-    return this.userService.name;
+    return this.auth.name;
   }
   get isAuthenticated() {
-    return this.auth.isAuthenticated();
+    return this.auth.isAuthenticated;
   }
   public toggleMenu(): void {
     this.menuOpen = !this.menuOpen;
   }
   public logout(): void {
-    this.userService.logout();
+    this.auth.logout();
+    this.auth.user = null;
   }
   navigateToWatchList(): void {
     this.toggleMenu();
@@ -62,6 +59,6 @@ export class HeaderComponent {
     // }
     this.toggleMenu();
 
-    this.router.navigate(['/uzivatel', this.userService.settings?.id ?? 0]);
+    this.router.navigate(['/uzivatel', this.auth.user?.id ?? 0]);
   }
 }

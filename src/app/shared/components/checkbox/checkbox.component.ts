@@ -1,6 +1,5 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { SearchActiveType } from '../../../search/types';
-import { RealityFilterTypeCheckbox } from '../../constants';
+import { RealityFilterHTMLType, SearchActiveType } from '../../../search/types';
 
 @Component({
   selector: 'custom-checkbox',
@@ -11,11 +10,11 @@ import { RealityFilterTypeCheckbox } from '../../constants';
 })
 export class CheckboxComponent {
   constructor() {}
-  @Input() item!: RealityFilterTypeCheckbox;
+  @Input() item!: RealityFilterHTMLType;
   @Output() onChangeCheckBox = new EventEmitter<SearchActiveType>();
   onChange(event: Event) {
-    console.log('event', this.item);
     const target = event.target as HTMLInputElement;
+
     this.item.active = target.checked;
     this.onChangeCheckBox.emit({
       active: target.checked,

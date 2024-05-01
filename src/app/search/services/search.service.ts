@@ -1,39 +1,37 @@
 import { Injectable } from '@angular/core';
 import { ApiService } from '../../shared/api/api.service';
-import { RealityFilterTypeList } from '../../shared/constants';
 import { lastValueFrom } from 'rxjs';
+import { RealityFilterTypeList, SearchPaginateRealityList } from '../types';
+import { Reality } from '../../shared/reality-list/types';
 
 @Injectable({
   providedIn: 'root',
 })
 export class SearchService {
   constructor(private api: ApiService) {}
-  private searchResults: Array<any> = [];
+  private searchResults: Array<Reality> = [];
   public query(data: Array<RealityFilterTypeList>): string {
     return this.getSearchResults(data);
   }
-  public async search(query: string, filters: string) {
+  public async search(query: number, filters: string, limit: number, page: number): Promise<SearchPaginateRealityList> {
     return await lastValueFrom(
-      this.api.get(`search?reality=${query}&${filters}`)
+      this.api.get<SearchPaginateRealityList>(`estates/search?type=${query}&${filters}&limit=${limit}&page=${page}`)
     );
   }
 
   private getSearchResults(data: Array<RealityFilterTypeList>) {
     const _query = data.flatMap((item) => {
       return Object.entries({
-        [item.type]: item.filters
-          .filter((filter) => filter.active)
-          .map((filter) => filter.searchIndex),
+        [item.dbKey]: item.filters
+          .filter((filter) => filter.active || filter.value)
+          .map((filter) => (filter.searchIndex ? filter.searchIndex : filter.value)),
       })
-        .filter(([key, value]) => value.length > 0) // filter out entries with no value
-        .map(
-          ([key, value]) =>
-            `${this.removeDiacritics(key)
-              .replaceAll(' ', '_')
-              .toLocaleLowerCase()}=${value.join(',')}`
-        );
+        .filter(([key, value]) => value.length > 0)
+        .map(([key, value]) => {
+          return `${this.removeDiacritics(key).replaceAll(' ', '_').toLocaleLowerCase()}=${value.join(',')}`;
+        });
     });
-    return '?' + _query.join('&');
+    return _query.join('&');
   }
   public removeDiacritics(value: string): string {
     const diacritics: { [index: string]: string } = {
@@ -59,8 +57,4 @@ export class SearchService {
       .map((char) => diacritics[char] || char)
       .join('');
   }
-}
-
-function remove() {
-  throw new Error('Function not implemented.');
 }
