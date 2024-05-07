@@ -1,5 +1,8 @@
+import { RealityLocation } from '../../../shared/reality-list/types';
+
 export interface RealityCreateConfig {
   uuid: string | null;
+  action: 'vytvorit' | 'upravit';
 }
 
 export enum RealityCreateInputType {
@@ -13,7 +16,7 @@ export enum RealityCreateInputType {
 export interface RealityCreateOptions {
   name: string;
   dbKey: string;
-  value: string | null | Array<string>;
+  value: string | null | Array<string | number> | RealityLocation;
   inputType: RealityCreateInputType;
   class: string;
   description?: string;

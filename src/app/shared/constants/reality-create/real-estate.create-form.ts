@@ -251,7 +251,7 @@ export const realityCreateOptionsSteps: Array<RealityCreateOptionsSteps> = [
       realityCreateOptions.find((field) => field.dbKey === 'condition') as RealityCreateOptions,
       realityCreateOptions.find((field) => field.dbKey === 'floor') as RealityCreateOptions,
       realityCreateOptions.find((field) => field.dbKey === 'area') as RealityCreateOptions,
-      realityCreateOptions.find((field) => field.dbKey === 'equipment') as RealityCreateOptions,
+      realityCreateOptions.find((field) => field.dbKey === 'additional_equipment') as RealityCreateOptions,
       realityCreateOptions.find((field) => field.dbKey === 'furniture') as RealityCreateOptions,
       realityCreateOptions.find((field) => field.dbKey === 'energy_consumption') as RealityCreateOptions,
     ],

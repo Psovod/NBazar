@@ -3,12 +3,8 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faAngleDoubleLeft, faAngleDoubleRight, faAngleLeft, faAngleRight } from '@fortawesome/free-solid-svg-icons';
-export interface Pagination {
-  currentPage: number;
-  itemsPerPage: number;
-  totalItems: number;
-  lastPage: number;
-}
+import { Pagination } from './types';
+
 @Component({
   selector: 'custom-pagination',
   standalone: true,

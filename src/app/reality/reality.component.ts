@@ -25,6 +25,7 @@ import { FavoriteRealityPipe } from './pipes/favorite-reality.pipe';
 import { UserService } from '../shared/auth/user.service';
 import { ImagePathPipe } from '../shared/pipes/image-path.pipe';
 import { EnergyColorCodePipe } from './pipes/energy-color-code.pipe';
+import { SwiperConfig } from './config/swiper-config';
 
 export interface RealityIcons {
   user: IconDefinition;
@@ -69,6 +70,8 @@ export class RealityComponent {
   private router = inject(Router);
   private route = inject(ActivatedRoute);
   public maps = inject(MapsService);
+  public showShareModal = false;
+  public shareLinkValue = window.location.href;
   public icons: RealityIcons = {
     user: faUser,
     email: faEnvelope,
@@ -86,6 +89,17 @@ export class RealityComponent {
       this.loadReality(uuid);
     });
   }
+
+  ngAfterViewChecked(): void {
+    this.reality$.subscribe((reality) => {
+      setTimeout(() => {
+        const swiperInstance = this.swiperEl.nativeElement as SwiperContainer;
+        Object.assign(swiperInstance, SwiperConfig);
+        swiperInstance.initialize();
+      }, 1);
+    });
+  }
+
   private loadReality(uuid: string): void {
     this.api
       .get<Reality>(`estate/${uuid}`)
@@ -102,7 +116,7 @@ export class RealityComponent {
       });
   }
   public shareLink(): void {
-    console.log(window.location.href);
+    this.showShareModal = !this.showShareModal;
   }
   public toggleFavorite(uuid: string): void {
     this.api

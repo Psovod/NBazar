@@ -55,7 +55,6 @@ export class SearchComponent {
   public async search() {
     const query = this.searchService.query(this.activeFilters);
     const type = this.searchService.removeDiacritics(this.query).replaceAll(' ', '_').toLocaleLowerCase();
-    console.log(type);
     await this.router.navigate(['/hledej', type, query]);
   }
   onTypeClick(type: SearchActiveType) {

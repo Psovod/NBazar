@@ -29,7 +29,6 @@ export interface Reality {
     | RealEstateSubTypeKomercni
     | RealEstateSubTypePozemky
     | RealEstateSubTypeOstatni;
-  title: string;
   ownership_type: RealEstateOwnership;
   price: number;
   energy_consumption: RealEstateEnergyConsumption;
@@ -46,9 +45,10 @@ export interface Reality {
 }
 
 export interface RealityLocation {
-  id: number;
+  id: string;
   address: string;
-  city: string;
+  county: number;
+  short_name: string;
   zip_code: string;
   coordinates: google.maps.LatLngLiteral;
 }

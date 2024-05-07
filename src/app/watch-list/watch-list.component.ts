@@ -5,7 +5,8 @@ import { ApiService } from '../shared/api/api.service';
 import { Reality, RealityListConfig } from '../shared/reality-list/types';
 import { RealityListComponent } from '../shared/reality-list/reality-list.component';
 import { AuthService } from '../shared/auth/auth.service';
-import { Pagination, PaginationComponent } from '../shared/components/pagination/pagination.component';
+import { PaginationComponent } from '../shared/components/pagination/pagination.component';
+import { Pagination, SearchPaginationResult } from '../shared/components/pagination/types';
 
 @Component({
   selector: 'app-watch-list',
@@ -35,13 +36,15 @@ export class WatchListComponent {
   handleLoad(pagination: Pagination) {
     this.loading$.next(true);
     this.api
-      .get<Array<Reality>>(
+      .get<SearchPaginationResult<Reality>>(
         `user/favorites/${this.auth.user?.id}?limit=${pagination.itemsPerPage}&page=${pagination.currentPage}`
       )
       .pipe(take(1))
       .subscribe({
         next: (res) => {
-          this.realityList$.next(res);
+          this.pagination.totalItems = res.total;
+          this.pagination.lastPage = res.lastPage;
+          this.realityList$.next(res.data);
         },
         error: (err) => {
           throw new Error(err);

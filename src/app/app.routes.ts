@@ -3,8 +3,7 @@ import { LoginComponent } from './login/login.component';
 import { AuthGuard } from './guards/auth.guard';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { LoginGuard } from './guards/login.guard';
-import { UserComponent } from './user/user.component';
-import { UserSettingsComponent } from './user/user-settings/user-settings.component';
+import { MyRealityComponent } from './my-reality/my-reality.component';
 import { RealityComponent } from './reality/reality.component';
 import { AdminComponent } from './admin/admin.component';
 import { AdminGuard } from './guards/admin.guard';
@@ -12,6 +11,7 @@ import { SearchComponent } from './search/search.component';
 import { SearchResultComponent } from './search/search-result/search-result.component';
 import { WatchListComponent } from './watch-list/watch-list.component';
 import { RegisterComponent } from './register/register.component';
+import { UserComponent } from './user/user.component';
 
 export const routes: Routes = [
   {
@@ -34,13 +34,13 @@ export const routes: Routes = [
     canActivate: [AuthGuard, AdminGuard],
   },
   {
-    path: 'uzivatel/reality',
-    component: UserComponent,
+    path: ':id/moje-reality',
+    component: MyRealityComponent,
     canActivate: [AuthGuard],
   },
   {
     path: 'uzivatel/:id',
-    component: UserSettingsComponent,
+    component: UserComponent,
     canActivate: [AuthGuard],
   },
   {

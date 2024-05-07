@@ -12,6 +12,8 @@ import { HeaderRoutes } from './types';
   styleUrl: './header.component.scss',
 })
 export class HeaderComponent {
+  private auth = inject(AuthService);
+  private router = inject(Router);
   public routes: Array<HeaderRoutes> = [
     {
       name: 'Domů',
@@ -20,8 +22,9 @@ export class HeaderComponent {
     },
     {
       name: 'Moje Reality',
-      path: '/uzivatel/reality',
+      path: `${this.auth.user?.id}/moje-reality`,
       public: false,
+      redirect: true,
     },
     {
       name: 'Sledované',
@@ -30,20 +33,25 @@ export class HeaderComponent {
     },
   ];
   public menuOpen: boolean = false;
-  private auth = inject(AuthService);
-  private router = inject(Router);
   get name() {
     return this.auth.name;
+  }
+  get isAdmin() {
+    return this.auth.isAdmin;
   }
   get isAuthenticated() {
     return this.auth.isAuthenticated;
   }
+
   public toggleMenu(): void {
     this.menuOpen = !this.menuOpen;
   }
   public logout(): void {
     this.auth.logout();
     this.auth.user = null;
+  }
+  public navigateToMyReality(): void {
+    this.router.navigate([`/${this.auth.user?.id}/moje-reality`]);
   }
   navigateToWatchList(): void {
     this.toggleMenu();
@@ -54,11 +62,7 @@ export class HeaderComponent {
     this.router.navigate(['/dashboard']);
   }
   navigateToSettings(): void {
-    // if (!this.userService.settings) {
-    //   return;
-    // }
     this.toggleMenu();
-
     this.router.navigate(['/uzivatel', this.auth.user?.id ?? 0]);
   }
 }

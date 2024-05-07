@@ -1,8 +1,10 @@
 import { Injectable } from '@angular/core';
 import { ApiService } from '../../shared/api/api.service';
 import { lastValueFrom } from 'rxjs';
-import { RealityFilterTypeList, SearchPaginateRealityList } from '../types';
+import { RealityFilterTypeList } from '../types';
 import { Reality } from '../../shared/reality-list/types';
+import { SearchPaginationResult } from '../../shared/components/pagination/types';
+import { REAL_ESTATE_FILTER_COUNTY_ARRAY, RealEstateFilterCounty } from '../../shared/constants/real-estate.byty';
 
 @Injectable({
   providedIn: 'root',
@@ -13,12 +15,22 @@ export class SearchService {
   public query(data: Array<RealityFilterTypeList>): string {
     return this.getSearchResults(data);
   }
-  public async search(query: number, filters: string, limit: number, page: number): Promise<SearchPaginateRealityList> {
+  public async search(
+    query: number,
+    filters: string,
+    limit: number,
+    page: number
+  ): Promise<SearchPaginationResult<Reality>> {
     return await lastValueFrom(
-      this.api.get<SearchPaginateRealityList>(`estates/search?type=${query}&${filters}&limit=${limit}&page=${page}`)
+      this.api.get<SearchPaginationResult<Reality>>(
+        `estates/search?type=${query}&${filters}&limit=${limit}&page=${page}`
+      )
     );
   }
-
+  public getCountyDbKey(county: RealEstateFilterCounty): number {
+    const array = REAL_ESTATE_FILTER_COUNTY_ARRAY;
+    return array.findIndex((item) => item === county) + 1;
+  }
   private getSearchResults(data: Array<RealityFilterTypeList>) {
     const _query = data.flatMap((item) => {
       return Object.entries({

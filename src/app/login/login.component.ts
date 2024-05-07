@@ -7,6 +7,7 @@ import { AuthService } from '../shared/auth/auth.service';
 import { take } from 'rxjs/operators';
 import { User } from '../shared/auth/types';
 import { UserService } from '../shared/auth/user.service';
+import { SnackbarService } from '../shared/components/snackbar/services/snackbar.service';
 
 @Component({
   selector: 'app-login',
@@ -17,6 +18,7 @@ import { UserService } from '../shared/auth/user.service';
 })
 export class LoginComponent {
   private api = inject(ApiService);
+  private snackbar = inject(SnackbarService);
   private auth = inject(AuthService);
   private user = inject(UserService);
   public get email() {
@@ -26,14 +28,10 @@ export class LoginComponent {
     return this.form.controls['password'];
   }
   public loading$ = new Subject<boolean>();
-  public error$ = new Subject<boolean>();
   public form: FormGroup = new FormGroup({
     email: new FormControl('', [Validators.required, Validators.email]),
     password: new FormControl('', [Validators.required]),
   });
-  public clearError(): void {
-    this.error$.next(false);
-  }
   public onSubmit(): void {
     this.loading$.next(true);
     this.api
@@ -52,7 +50,6 @@ export class LoginComponent {
         },
         error: (error: any) => {
           this.loading$.next(false);
-          this.error$.next(true);
           throw new Error(error);
         },
       });

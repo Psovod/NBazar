@@ -1,21 +1,19 @@
 import { Injectable, inject } from '@angular/core';
-import { Auth, Authorization, User } from './types';
+import { Auth, AuthRole, Authorization, User } from './types';
 import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
-  private auth: Auth;
+  private default: Auth = {
+    user: null,
+    isAuthenticated: false,
+    authorization: null,
+  };
+  private auth: Auth = this.default;
   private router = inject(Router);
 
-  constructor() {
-    this.auth = {
-      user: null,
-      isAuthenticated: false,
-      authorization: null,
-    };
-  }
   public set user(user: User | null) {
     this.auth.user = user;
   }
@@ -23,6 +21,9 @@ export class AuthService {
     if (this.auth.user?.watched_estates) {
       this.auth.user.watched_estates.push(watched);
     }
+  }
+  get isAdmin(): boolean {
+    return this.auth.user?.role === AuthRole.ADMIN;
   }
   get isAuthenticated(): boolean {
     return this.auth.isAuthenticated;
@@ -59,11 +60,7 @@ export class AuthService {
     await this.setAuth(auth);
   }
   public logout() {
-    this.auth = {
-      user: null,
-      isAuthenticated: false,
-      authorization: null,
-    };
+    this.auth = this.default;
     this.setLocalStorage();
     this.router.navigate(['/login']);
   }

@@ -16,11 +16,20 @@ import { FileUploadComponent } from '../../shared/components/file-upload/file-up
 import { CheckboxComponent } from '../../shared/components/checkbox/checkbox.component';
 import { SearchActiveType } from '../../search/types';
 import { RealityCreateService } from './services/reality-create.service';
+import { MapsAutocompleteComponent } from '../../shared/components/maps/maps-autocomplete/maps-autocomplete.component';
+import { RealityLocation } from '../../shared/reality-list/types';
 
 @Component({
   selector: 'app-reality-create',
   standalone: true,
-  imports: [CommonModule, FormsModule, FileUploadComponent, FontAwesomeModule, CheckboxComponent],
+  imports: [
+    CommonModule,
+    FormsModule,
+    FileUploadComponent,
+    FontAwesomeModule,
+    CheckboxComponent,
+    MapsAutocompleteComponent,
+  ],
   templateUrl: './reality-create.component.html',
   styleUrl: './reality-create.component.scss',
 })
@@ -32,12 +41,12 @@ export class RealityCreateComponent {
   public icons: Array<IconDefinition> = [faCheck, faClose];
   public selectedStepIndex: number = 0;
   public content!: Array<RealityCreateFormValues>;
-  public config: RealityCreateConfig = { uuid: null };
+  public config: RealityCreateConfig = { uuid: null, action: 'vytvorit' };
   public title!: string;
   @Output() outputEvent: EventEmitter<boolean> = new EventEmitter<boolean>();
   public dialogRef: ComponentRef<RealityCreateComponent> | null = null;
-  public realityCreateOptionsSteps: Array<RealityCreateOptionsSteps> = realityCreateOptionsSteps;
-  ngOnInit(): void {
+  public realityCreateOptionsSteps: Array<RealityCreateOptionsSteps> = structuredClone(realityCreateOptionsSteps);
+  async ngOnInit(): Promise<void> {
     this.reset();
     if (this.content) {
       this.realityCreateOptionsSteps = this.reality.convertToRealityFormData(
@@ -60,11 +69,16 @@ export class RealityCreateComponent {
   public async nextStep(): Promise<void> {
     if (this.selectedStepIndex === this.realityCreateOptionsSteps.length - 1) {
       this.isLoading$.next(true);
+      if (!this.isValid()) {
+        return this.isLoading$.next(false);
+      }
       this.reality
         .updateReality(this.config?.uuid, this.reality.dataForm(this.realityCreateOptionsSteps))
         .then(() => {
           this.isLoading$.next(false);
+          this.isError$.next(false);
           this.outputEvent.emit(true);
+          this.close();
         })
         .catch(() => {
           this.isLoading$.next(false);
@@ -123,7 +137,13 @@ export class RealityCreateComponent {
           break;
       }
     }
-    selected.valid = selected.field.every((field) => field.value !== '' && field.value !== null);
+    selected.valid = selected.field.every((field) => {
+      if (field.dbKey !== 'additional_equipment') {
+        return field.value !== '' && field.value !== null;
+      } else {
+        return true;
+      }
+    });
   }
   private reset(): void {
     this.realityCreateOptionsSteps.forEach((step) => {
@@ -136,6 +156,9 @@ export class RealityCreateComponent {
     this.realityCreateOptionsSteps.forEach((step) => {
       this.validateField(step);
     });
+  }
+  private isValid(): boolean {
+    return this.realityCreateOptionsSteps.every((step) => step.valid);
   }
   ngOnDestroy(): void {
     //Called once, before the instance is destroyed.

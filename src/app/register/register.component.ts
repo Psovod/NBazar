@@ -12,6 +12,9 @@ import { Subject, take } from 'rxjs';
 import { registerForm } from './form';
 import { ApiService } from '../shared/api/api.service';
 import { User } from '../shared/auth/types';
+import { Router } from '@angular/router';
+import { AuthService } from '../shared/auth/auth.service';
+import { UserService } from '../shared/auth/user.service';
 
 @Component({
   selector: 'app-register',
@@ -26,6 +29,9 @@ export class RegisterComponent {
   public form!: FormGroup;
   public registerForm = registerForm;
   private api = inject(ApiService);
+  private router = inject(Router);
+  private auth = inject(AuthService);
+  private user = inject(UserService);
   constructor() {
     this.createForm();
   }
@@ -33,12 +39,14 @@ export class RegisterComponent {
     if (this.form.valid) {
       this.loading$.next(true);
       this.api
-        .post<User>('user', this.form.value)
+        .post<string>('user', this.form.value)
         .pipe(take(1))
         .subscribe({
-          next: () => {
+          next: async (token) => {
             this.loading$.next(false);
             this.error$.next(false);
+            await this.login(token);
+            this.router.navigate(['/login']);
           },
           error: (error) => {
             this.error$.next(true);
@@ -51,6 +59,12 @@ export class RegisterComponent {
 
   public clearError(): void {
     this.error$.next(false);
+  }
+  private async login(token: string): Promise<void> {
+    await this.auth.login({
+      accessToken: token,
+    });
+    await this.user.get();
   }
   private createForm(): void {
     const formGroup: { [key: string]: FormControl } = {};

@@ -5,7 +5,7 @@ import {
   realityCreateSizeType,
   selectTypeArray,
 } from '../../../shared/constants/reality-create/real-estate.create-form';
-import { last, lastValueFrom } from 'rxjs';
+import { lastValueFrom } from 'rxjs';
 import { ApiService } from '../../../shared/api/api.service';
 import { ImagesService } from '../../../shared/upload/images.service';
 
@@ -88,28 +88,7 @@ export class RealityCreateService {
     return steps
       .map((step) => step.field)
       .reduce((acc, val) => acc.concat(val), [])
-      .map((field, i) => {
-        if (field.value instanceof Array) {
-          return {
-            name: field.dbKey,
-            value: field.value,
-          };
-        }
-        if (field.dbKey === 'location') {
-          return {
-            name: field.dbKey,
-            value: {
-              id: 1,
-              address: 'Praha 4',
-              city: 'Praha',
-              zip_code: '14000',
-              coordinates: {
-                lat: 50.0755 + i * Math.random() * 0.005,
-                lng: 14.4378 + i * Math.random() * 0.005,
-              },
-            },
-          };
-        }
+      .map((field) => {
         return {
           name: field.dbKey,
           value: field.value,

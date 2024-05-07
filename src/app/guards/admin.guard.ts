@@ -5,6 +5,9 @@ import { AuthService } from '../shared/auth/auth.service';
 export const AdminGuard: CanActivateFn = (route, state) => {
   const auth = inject(AuthService);
   const router = inject(Router);
-  //admin guard
+  if (!auth.isAdmin) {
+    router.navigate(['/dashboard']);
+    return false;
+  }
   return true;
 };

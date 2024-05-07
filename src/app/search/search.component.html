@@ -1,4 +1,4 @@
-<div class="container max-w-5xl m-auto my-4 p-5 border border-gray-300 rounded-lg">
+<div class="overflow-scroll header-height-diff max-w-5xl m-auto my-4 p-5 border border-gray-300 rounded-lg">
   <div class="flex justify-between items-center mb-4">
     <h1 class="text-3xl font-bold capitalize">
       <custom-dropdown
@@ -29,7 +29,7 @@
     @switch (filter.inputType) { @case ('checkbox') { @for (item of filter.filters; track $index) {
     <custom-checkbox
       (onChangeCheckBox)="onCheckboxChange($event)"
-      [item]="item"></custom-checkbox>
+      [option]="item"></custom-checkbox>
     } } @case ('range') { @for (item of filter.filters; track $index) {
     <input
       type="number"
@@ -60,7 +60,7 @@
   <div class="flex justify-end">
     <button
       (click)="search()"
-      class="bg-red-600 text-white px-6 py-2 rounded-md font-bold">
+      class="bg-red-500 text-white px-4 py-2 rounded-md font-bold">
       Zobrazit 18 720 inzerátů
     </button>
   </div>

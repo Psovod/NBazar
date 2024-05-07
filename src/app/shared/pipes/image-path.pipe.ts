@@ -10,6 +10,9 @@ export class ImagePathPipe implements PipeTransform {
     if (src === undefined || src === null) {
       return 'https://via.placeholder.com/150';
     }
+    if (src.length === 0) {
+      return 'https://via.placeholder.com/150';
+    }
     if (Array.isArray(src)) {
       return environment.storage + src[0];
     }

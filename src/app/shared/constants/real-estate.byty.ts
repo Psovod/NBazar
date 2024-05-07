@@ -7,7 +7,7 @@ export enum REAL_ESTATE_FILTER_DB_KEY_ARRAY {
   VELIKOST = 'room_type',
   VYBER_LOKALITY = 'location',
   CENA = 'price',
-  NECO_NAVIC = 'equipment',
+  NECO_NAVIC = 'additional_equipment',
   STAVBA = 'building_material',
   ENERGETICKA_TRIDA = 'energy_consumption',
   VLATNICTVI = 'ownership_type',
@@ -37,6 +37,37 @@ export enum REAL_ESTATE_FILTER_BYTY {
   PLOCHA = 'užitná plocha',
   STARI = 'staří inzerátu',
 }
+export type RealEstateFilterCounty =
+  | 'Hlavní město Praha'
+  | 'Středočeský kraj'
+  | 'Jihočeský kraj'
+  | 'Plzeňský kraj'
+  | 'Karlovarský kraj'
+  | 'Ústecký kraj'
+  | 'Liberecký kraj'
+  | 'Královéhradecký kraj'
+  | 'Pardubický kraj'
+  | 'Vysočina'
+  | 'Jihomoravský kraj'
+  | 'Olomoucký kraj'
+  | 'Zlínský kraj'
+  | 'Moravskoslezský kraj';
+export const REAL_ESTATE_FILTER_COUNTY_ARRAY = [
+  'Hlavní město Praha',
+  'Středočeský kraj',
+  'Jihočeský kraj',
+  'Plzeňský kraj',
+  'Karlovarský kraj',
+  'Ústecký kraj',
+  'Liberecký kraj',
+  'Královéhradecký kraj',
+  'Pardubický kraj',
+  'Vysočina',
+  'Jihomoravský kraj',
+  'Olomoucký kraj',
+  'Zlínský kraj',
+  'Moravskoslezský kraj',
+];
 export const REAL_ESTATE_STARI_ARRAY = ['bez omezení', 'den', 'posledních 7 dní', 'posledních 30 dní'];
 export type RealEstateCondition =
   | 'velmi dobrý'
@@ -139,7 +170,7 @@ export const REAL_ESTATE_FILTER_BYTY_MAP: RealEstateFilterMap = {
   },
   [REAL_ESTATE_FILTER_BYTY.VYBER_LOKALITY]: {
     type: REAL_ESTATE_FILTER_INPUT_TYPE.CHECKBOX,
-    array: ['Praha', 'Brno'],
+    array: REAL_ESTATE_FILTER_COUNTY_ARRAY,
     dbKey: REAL_ESTATE_FILTER_DB_KEY_ARRAY.VYBER_LOKALITY,
   }, //pak budou další lokality
   [REAL_ESTATE_FILTER_BYTY.CENA]: {

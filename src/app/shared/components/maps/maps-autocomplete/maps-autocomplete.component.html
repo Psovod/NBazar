@@ -1,0 +1,11 @@
+<input
+  #autocomplete
+  [disabled]="!!(isLoading$ | async)"
+  [value]="inputValue"
+  (input)="onInput($event)"
+  [placeholder]="''"
+  type="text"
+  required
+  [id]="item.name"
+  [ngClass]="{ 'ng-valid': valid, 'ng-invalid': !valid, 'ng-touched': touched }"
+  class="w-full input-primary" />

@@ -24,7 +24,7 @@
               'border-green-500 ': item.valid,
              
             }"
-            class="flex items-center cursor-pointer rounded-full h-10 w-10 py-2 border-2 bg-gray-300 text-white border-gray-400 justify-center">
+            class="flex items-center cursor-pointer rounded-full h-10 w-10 py-2 border-2 text-gray-300 border-gray-300 justify-center">
             <fa-icon
               [icon]="item.valid ? icons[0] : icons[1]"
               [ngClass]="{
@@ -67,7 +67,8 @@
           <div class="flex flex-wrap gap-2">
             @for (option of item.options; track $index) {
             <custom-checkbox
-              [item]="option"
+              [option]="option"
+              [item]="item"
               (onChangeCheckBox)="changeCheckBox($event, item, option)"></custom-checkbox>
             }
           </div>
@@ -139,14 +140,10 @@
             class="text-sm">
             <span class="capitalize">{{ item.name }}</span>
           </label>
-          <input
-            (change)="validateField(selected)"
-            [disabled]="!!(isLoading$ | async)"
-            [(ngModel)]="item.value"
-            type="text"
-            required
-            [id]="item.name"
-            class="w-full input-primary" />
+          <custom-maps-autocomplete
+            (onPlaceSelect)="validateField(selected)"
+            [item]="item"
+            [isLoading$]="isLoading$"></custom-maps-autocomplete>
         </div>
         } @if (item.inputType === 'files') {
         <div [ngClass]="item.class">
@@ -167,7 +164,8 @@
         Zpět
       </button>
       <button
-        class="btn-primary"
+        class="btn-primary capitalize"
+        [disabled]="!!(isLoading$ | async) || !realityCreateOptionsSteps[selectedStepIndex].valid"
         (click)="nextStep()"
         [ngClass]="{
           'opacity-50 cursor-not-allowed': (isLoading$ | async),
@@ -176,7 +174,7 @@
         @if (isError$ | async ) {
         {{ selectedStepIndex === realityCreateOptionsSteps.length - 1 ? "Zkusit znovu" : "Další" }}
         } @else {
-        {{ selectedStepIndex === realityCreateOptionsSteps.length - 1 ? "Vytvořit" : "Další" }}
+        {{ selectedStepIndex === realityCreateOptionsSteps.length - 1 ? config.action : "Další" }}
         }
       </button>
     </div>

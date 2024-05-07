@@ -7,6 +7,6 @@ import { RealityLocation } from '../../../shared/reality-list/types';
 })
 export class RealityLocationPipe implements PipeTransform {
   transform(location: RealityLocation): string {
-    return `${location.address}, ${location.city}, ${location.zip_code}`;
+    return `${location.address}`;
   }
 }

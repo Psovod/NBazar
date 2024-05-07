@@ -5,13 +5,14 @@ import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { BehaviorSubject } from 'rxjs';
 import { MapsComponent } from '../../shared/components/maps/maps.component';
 import { REAL_ESTATE_TYPE } from '../../shared/constants';
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { RealityLocationPipe } from './pipes/reality-location.pipe';
 import { MapsService } from '../../shared/components/maps/services/maps.service';
 import { Reality } from '../../shared/reality-list/types';
 import { ImagePathPipe } from '../../shared/pipes/image-path.pipe';
 import { FormsModule } from '@angular/forms';
-import { Pagination, PaginationComponent } from '../../shared/components/pagination/pagination.component';
+import { PaginationComponent } from '../../shared/components/pagination/pagination.component';
+import { Pagination } from '../../shared/components/pagination/types';
+import { RealityNamePipe } from '../../reality/pipes/reality-name.pipe';
 
 @Component({
   selector: 'app-search-result',
@@ -22,6 +23,7 @@ import { Pagination, PaginationComponent } from '../../shared/components/paginat
     NgOptimizedImage,
     MapsComponent,
     RealityLocationPipe,
+    RealityNamePipe,
     ImagePathPipe,
     PaginationComponent,
   ],
@@ -32,6 +34,7 @@ export class SearchResultComponent {
   public searchResults$: BehaviorSubject<Array<Reality>> = new BehaviorSubject<Array<Reality>>([]);
   public maps = inject(MapsService);
   public query: string = '';
+  public loading$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   private search = inject(SearchService);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
@@ -65,6 +68,7 @@ export class SearchResultComponent {
     this.router.navigate(['/reality', id || 'test']);
   }
   private async handleSearch(pagination: Pagination): Promise<void> {
+    this.loading$.next(true);
     const index =
       Object.values(REAL_ESTATE_TYPE).findIndex((item) => {
         return item === this.query;
@@ -79,5 +83,6 @@ export class SearchResultComponent {
     this.maps.list = data;
     pagination.totalItems = total;
     pagination.lastPage = lastPage;
+    this.loading$.next(false);
   }
 }

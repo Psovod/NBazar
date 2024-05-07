@@ -1,67 +1,53 @@
-import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core';
-import { BehaviorSubject, take } from 'rxjs';
-import { ModalService } from '../shared/modal/modal.service';
-import { RealityCreateComponent } from '../reality/reality-create/reality-create.component';
-import { ApiService } from '../shared/api/api.service';
-import { RealityListComponent } from '../shared/reality-list/reality-list.component';
-import { Reality, RealityListConfig } from '../shared/reality-list/types';
+import { CommonModule } from '@angular/common';
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { BehaviorSubject, Subject, lastValueFrom } from 'rxjs';
 import { AuthService } from '../shared/auth/auth.service';
-import { Pagination, PaginationComponent } from '../shared/components/pagination/pagination.component';
+import { UserService } from '../shared/auth/user.service';
+import { User } from '../shared/auth/types';
+import { ApiService } from '../shared/api/api.service';
 
 @Component({
   selector: 'app-user',
   standalone: true,
-  imports: [CommonModule, RealityListComponent, PaginationComponent],
-  providers: [ModalService],
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './user.component.html',
   styleUrl: './user.component.scss',
 })
 export class UserComponent {
-  private api = inject(ApiService);
-  private modal = inject(ModalService);
   private auth = inject(AuthService);
-  public loading$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
-  public config: RealityListConfig = { canDelete: true, canEdit: true };
-  public pagination: Pagination = {
-    currentPage: 1,
-    itemsPerPage: 10,
-    totalItems: 0,
-    lastPage: 0,
-  };
-  public realityList$: BehaviorSubject<Array<Reality>> = new BehaviorSubject<Array<Reality>>([]);
-  ngOnInit(): void {
-    this.handleLoad(this.pagination);
+  private user = inject(UserService);
+  private api = inject(ApiService);
+  public form: FormGroup = new FormGroup({
+    name: new FormControl('', [Validators.required]),
+    surname: new FormControl('', [Validators.required]),
+    email: new FormControl('', [Validators.required, Validators.email]),
+    password: new FormControl('', []),
+  });
+  public isLoading$: Subject<boolean> = new Subject<boolean>();
+  async ngOnInit(): Promise<void> {
+    await lastValueFrom(this.api.get<User>('user')).then((user) => {
+      this.auth.user = user;
+      this.auth.setLocalStorage();
+      this.form.patchValue(user);
+    });
   }
-  public onPageChange(pagination: Pagination) {
-    this.handleLoad(pagination);
+  get name() {
+    return this.form.controls['name'];
   }
-  private handleLoad(pagination: Pagination) {
-    this.loading$.next(true);
-    this.api
-      .get<Array<Reality>>(
-        `user/owned/${this.auth.user?.id}?limit=${pagination.itemsPerPage}&page=${pagination.currentPage}`
-      )
-      .pipe(take(1))
-      .subscribe({
-        next: (res) => {
-          this.realityList$.next(res);
-        },
-        error: (err) => {
-          throw new Error(err);
-        },
-        complete: () => {
-          this.loading$.next(false);
-        },
-      });
+  get surname() {
+    return this.form.controls['surname'];
   }
-  public createReality() {
-    this.modal
-      .open(RealityCreateComponent, 'Přidání nové reality', undefined, {
-        uuid: null,
-      })
-      .subscribe((res) => {
-        console.log(res);
-      });
+  get email() {
+    return this.form.controls['email'];
+  }
+  get password() {
+    return this.form.controls['password'];
+  }
+  async onSubmit(): Promise<void> {
+    if (this.password.value === '') delete this.form.value.password;
+    this.isLoading$.next(true);
+    await this.user.update(this.form.value);
+    this.isLoading$.next(false);
   }
 }

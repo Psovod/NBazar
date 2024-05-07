@@ -5,11 +5,7 @@ export interface SearchActiveType {
   active: boolean;
   name: string;
 }
-export interface SearchPaginateRealityList {
-  data: Array<Reality>;
-  total: number;
-  lastPage: number;
-}
+
 export interface RealityFilterTypeList {
   name: string;
   dbKey: string;
