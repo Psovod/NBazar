@@ -10,7 +10,7 @@ export class SnackbarService {
 
   constructor(private appRef: ApplicationRef, private injector: EnvironmentInjector) {}
 
-  public open(message: string, color: SnackBarColor, timeout: number = 3000): void {
+  public open(message: string, color: SnackBarColor, timeout: number = 5000): void {
     const snackbarRef = createComponent(SnackbarComponent, {
       environmentInjector: this.injector,
     });
@@ -24,9 +24,9 @@ export class SnackbarService {
     document.body.appendChild(snackbarRef.location.nativeElement);
     this.appRef.attachView(snackbarRef.hostView);
 
-    // setTimeout(() => {
-    //   this.destroy(snackbarRef);
-    // }, timeout);
+    setTimeout(() => {
+      this.destroy(snackbarRef);
+    }, timeout);
   }
 
   public destroy(snackbarRef: ComponentRef<SnackbarComponent>): void {

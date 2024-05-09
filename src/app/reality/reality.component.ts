@@ -5,6 +5,7 @@ import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 import {
   faArrowLeftLong,
   faEnvelope,
+  faGavel,
   faPhone,
   faShare,
   faSpinner,
@@ -26,6 +27,9 @@ import { UserService } from '../shared/auth/user.service';
 import { ImagePathPipe } from '../shared/pipes/image-path.pipe';
 import { EnergyColorCodePipe } from './pipes/energy-color-code.pipe';
 import { SwiperConfig } from './config/swiper-config';
+import { SnackbarService } from '../shared/components/snackbar/services/snackbar.service';
+import { ModalService } from '../shared/modal/modal.service';
+import { ConfirmComponent } from '../shared/components/confirm-delete/confirm.component';
 
 export interface RealityIcons {
   user: IconDefinition;
@@ -35,6 +39,7 @@ export interface RealityIcons {
   star: IconDefinition;
   share: IconDefinition;
   loading: IconDefinition;
+  report: IconDefinition;
 }
 export interface WatchedRealityMessage {
   message: 'Nesleduji' | 'Sleduji';
@@ -53,7 +58,7 @@ export interface WatchedRealityMessage {
     ImagePathPipe,
     EnergyColorCodePipe,
   ],
-  providers: [{ provide: LOCALE_ID, useValue: 'cs-CZ' }],
+  providers: [{ provide: LOCALE_ID, useValue: 'cs-CZ' }, ModalService],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './reality.component.html',
   styleUrl: './reality.component.scss',
@@ -66,6 +71,8 @@ export class RealityComponent {
   public reality$: Subject<Reality> = new Subject<Reality>();
   public onWatchedChange: boolean = false;
   private api = inject(ApiService);
+  private snackbar = inject(SnackbarService);
+  private modal = inject(ModalService);
   private user = inject(UserService);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
@@ -80,6 +87,7 @@ export class RealityComponent {
     star: faStar,
     share: faShare,
     loading: faSpinner,
+    report: faGavel,
   };
 
   public test = ['price', 'ownership_type', 'floor', 'area', 'building_material', 'condition', 'furniture'];
@@ -99,20 +107,22 @@ export class RealityComponent {
       }, 1);
     });
   }
-
-  private loadReality(uuid: string): void {
-    this.api
-      .get<Reality>(`estate/${uuid}`)
-      .pipe(take(1))
-      .subscribe({
-        next: (reality) => {
-          this.reality$.next(reality);
-          this.maps.list = [reality];
-          this.maps.selected = reality;
-        },
-        error: (error) => {
-          console.error(error);
-        },
+  public report(uuid: string): void {
+    this.modal
+      .open<ConfirmComponent, boolean>(ConfirmComponent, 'Opravdu chcete nahlásit realitu?', {
+        input: uuid,
+        message: 'nahlásit',
+      })
+      .subscribe((response) => {
+        if (response)
+          this.api
+            .post<{ message: string }>('user/report', { uuid })
+            .pipe(take(1))
+            .subscribe({
+              next: (response) => {
+                this.snackbar.open(response.message, 'bg-green-500', 3000);
+              },
+            });
       });
   }
   public shareLink(): void {
@@ -134,5 +144,20 @@ export class RealityComponent {
   }
   public navigateToSearch(): void {
     this.router.navigate(['/hledej/byty/query']);
+  }
+  private loadReality(uuid: string): void {
+    this.api
+      .get<Reality>(`estate/${uuid}`)
+      .pipe(take(1))
+      .subscribe({
+        next: (reality) => {
+          this.reality$.next(reality);
+          this.maps.list = [reality];
+          this.maps.selected = reality;
+        },
+        error: (error) => {
+          console.error(error);
+        },
+      });
   }
 }

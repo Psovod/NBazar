@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ConfirmDeleteComponent } from './confirm-delete.component';
+import { ConfirmDeleteComponent } from './confirm.component';
 
 describe('ConfirmDeleteComponent', () => {
   let component: ConfirmDeleteComponent;
@@ -8,10 +8,9 @@ describe('ConfirmDeleteComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ConfirmDeleteComponent]
-    })
-    .compileComponents();
-    
+      imports: [ConfirmDeleteComponent],
+    }).compileComponents();
+
     fixture = TestBed.createComponent(ConfirmDeleteComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

@@ -1,4 +1,4 @@
-<div class="divide-y divide-gray-200 overflow-scroll header-height-diff">
+<div class="divide-y divide-gray-200 overflow-scroll">
   @if (!(loading$ | async)) { @if (realityList?.length ) {@for (reality of realityList; track $index) {
   <div class="flex items-center justify-between p-4">
     <div class="flex items-center space-x-3">
@@ -13,6 +13,12 @@
       </div>
     </div>
     <div class="flex items-center space-x-3">
+      @if (config.canShowReport) {
+      <span class="btn-danger">
+        {{ reality.reported_count }}
+      </span>
+      }
+
       <button
         (click)="openReality(reality.uuid)"
         class="btn-primary">

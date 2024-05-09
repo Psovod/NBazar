@@ -1,5 +1,28 @@
-<div class="overflow-scroll header-height-diff max-w-5xl mx-auto my-4 p-5 rounded-lg shadow">
-  @if (!(loading$ | async)) { @if (users | async; as users ) { @if (users.length > 0) {
+<div class="overflow-scroll h-[calc(100dvh-12dvh)] max-w-5xl mx-auto my-4 p-5 rounded-lg shadow">
+  <div class="flex">
+    <div class="text-2xl font-semibold mr-auto">{{ filter.active.name }}</div>
+    <div>
+      <button
+        (click)="changeList(filter.users)"
+        [ngClass]="{
+          'bg-red-500 !text-white opacity-100 cursor-pointer': filter.active.active === filter.users.active
+        }"
+        class="text-gray-700 px-3 py-1 rounded-full font-bold">
+        {{ filter.users.name }}
+      </button>
+      <button
+        (click)="changeList(filter.reality)"
+        [ngClass]="{
+          'bg-red-500 !text-white opacity-100 cursor-pointer': filter.active.active === filter.reality.active
+        }"
+        class="text-gray-700 px-3 py-1 rounded-full font-bold">
+        {{ filter.reality.name }}
+      </button>
+    </div>
+  </div>
+  <div class="text-gray-600 mb-2">{{ filter.active.info }}</div>
+  @switch (filter.active._name) { @case ('users') { @if (!(loading$ | async)) { @if (users$ | async; as users ) { @if
+  (users.length > 0) {
   <div class="grid grid-cols-12 gap-4 items-center">
     <div class="col-span-2 font-semibold">Emailová adresa</div>
     <div class="col-span-2 font-semibold">Celé jméno</div>
@@ -69,5 +92,14 @@
 
     }
   </div>
-  }
+  } } @case ('reality') { @if (realityList$ | async; as realityList ) { @if (realityList.length > 0) {
+  <reality-list
+    [loading$]="loading$"
+    [config]="config"
+    [realityList]="realityList"></reality-list>
+  <custom-pagination
+    [pagination]="pagination"
+    (onPageChange)="pageChange($event)"></custom-pagination>
+
+  } } } }
 </div>

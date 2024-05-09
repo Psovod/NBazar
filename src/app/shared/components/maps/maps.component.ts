@@ -1,11 +1,10 @@
 import { CommonModule, CurrencyPipe } from '@angular/common';
-import { Component, LOCALE_ID, QueryList, ViewChild, ViewChildren, inject } from '@angular/core';
+import { Component, QueryList, ViewChild, ViewChildren, inject } from '@angular/core';
 import { GoogleMap, GoogleMapsModule, MapAdvancedMarker } from '@angular/google-maps';
 import { Subject, Subscription } from 'rxjs';
 import { REAL_ESTATE_TYPE } from '../../constants';
 import { MapsService } from './services/maps.service';
 import { MarkerElementOptions, RealityMarker } from './types';
-import { RealityLocationPipe } from '../../../search/search-result/pipes/reality-location.pipe';
 import { Reality } from '../../reality-list/types';
 import { ImagePathPipe } from '../../pipes/image-path.pipe';
 

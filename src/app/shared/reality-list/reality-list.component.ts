@@ -9,7 +9,7 @@ import { RealityCreateFormValues } from '../../reality/reality-create/types';
 import { Reality, RealityListConfig } from './types';
 import { ApiService } from '../api/api.service';
 import { ImagePathPipe } from '../pipes/image-path.pipe';
-import { ConfirmDeleteComponent } from '../components/confirm-delete/confirm-delete.component';
+import { ConfirmComponent } from '../components/confirm-delete/confirm.component';
 import { RealityNamePipe } from '../../reality/pipes/reality-name.pipe';
 
 @Component({
@@ -23,7 +23,12 @@ import { RealityNamePipe } from '../../reality/pipes/reality-name.pipe';
 export class RealityListComponent {
   @Input() public loading$: Subject<boolean> = new Subject<boolean>();
   @Input() public realityList: Array<Reality> | null = [];
-  @Input() public config: RealityListConfig = { canDelete: false, canEdit: false, canFavorite: false };
+  @Input() public config: RealityListConfig = {
+    canDelete: false,
+    canEdit: false,
+    canFavorite: false,
+    canShowReport: false,
+  };
   @Output() public onRealityChange: EventEmitter<boolean> = new EventEmitter<boolean>();
   private modal = inject(ModalService);
   private router = inject(Router);
@@ -47,7 +52,10 @@ export class RealityListComponent {
   }
   public deleteReality(id: string) {
     this.modal
-      .open<ConfirmDeleteComponent, boolean>(ConfirmDeleteComponent, 'Potvrdtě smazání reality', id)
+      .open<ConfirmComponent, boolean>(ConfirmComponent, 'Potvrdtě smazání reality', {
+        input: id,
+        message: 'smazat',
+      })
       .subscribe((res) => {
         if (res) {
           this.api

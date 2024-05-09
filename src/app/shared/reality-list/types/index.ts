@@ -15,6 +15,7 @@ import { RealEstateSubTypePozemky } from '../../constants/real-estate.pozemky';
 export interface RealityListConfig {
   canDelete: boolean;
   canEdit: boolean;
+  canShowReport?: boolean;
   canFavorite?: boolean;
 }
 

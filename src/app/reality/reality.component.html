@@ -1,4 +1,4 @@
-<div class="flex gap-2 w-full header-height-diff">
+<div class="flex gap-2 w-full h-[calc(100dvh-6dvh)]">
   <div class="flex-1 max-h-screen">
     <app-maps></app-maps>
   </div>
@@ -165,6 +165,15 @@
                     class="w-full p-1 border border-gray-300 rounded mb-2" />
                 </div>
               </div>
+              <button
+                (click)="report(reality.uuid)"
+                class="btn-primary items-center gap-1 inline-flex">
+                <fa-icon
+                  class="text-gray-400"
+                  [icon]="icons.report"
+                  size="lg"></fa-icon>
+                <span>Nahlásit</span>
+              </button>
             </div>
           </div>
         </div>

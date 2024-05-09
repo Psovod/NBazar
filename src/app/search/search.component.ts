@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CheckboxComponent } from '../shared/components/checkbox/checkbox.component';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
@@ -20,7 +20,10 @@ import { FormsModule } from '@angular/forms';
   styleUrl: './search.component.scss',
 })
 export class SearchComponent {
-  constructor(private route: ActivatedRoute, private router: Router, private searchService: SearchService) {
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
+  private searchService = inject(SearchService);
+  constructor() {
     this.routeSubscription = this.route.params.subscribe((params) => {
       this.query = params['query'];
       this.setFilterType(this.query);
@@ -44,11 +47,15 @@ export class SearchComponent {
   public dropDownItems: Array<REAL_ESTATE_TYPE> = REAL_ESTATE.map((item) => item.name);
   public activeFilters: Array<RealityFilterTypeList> = [];
   public iconDown: IconDefinition = faChevronDown;
-
+  public searchCount: number = 0;
   ngOnInit(): void {
     this.onTypeClick(this.activeType[0]);
+    this.getSearchCount();
   }
-  onCheckboxChange(event: SearchActiveType) {}
+
+  onCheckboxChange(event: SearchActiveType) {
+    this.getSearchCount();
+  }
   onItemSelected(item: REAL_ESTATE_TYPE) {
     this.router.navigate(['/hledej', item]);
   }
@@ -97,6 +104,7 @@ export class SearchComponent {
         return filter;
       });
     }
+    this.getSearchCount();
   }
   private setFilterType(type: REAL_ESTATE_TYPE) {
     this.activeFilters = [];
@@ -149,6 +157,22 @@ export class SearchComponent {
         filters: filters,
       });
     });
+    this.getSearchCount();
+  }
+  private getSearchCount() {
+    const query = this.searchService.query(this.activeFilters);
+    const type =
+      Object.values(REAL_ESTATE_TYPE).findIndex((item) => {
+        return item === this.query;
+      }) + 1;
+    this.searchService
+      .searchCount(type, query)
+      .then((count) => {
+        this.searchCount = count;
+      })
+      .catch((error) => {
+        console.error(error);
+      });
   }
   ngOnDestroy(): void {
     this.routeSubscription.unsubscribe();
