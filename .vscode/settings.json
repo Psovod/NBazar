@@ -8,5 +8,6 @@
     "titleBar.inactiveBackground": "#8a00c299",
     "titleBar.inactiveForeground": "#e7e7e799"
   },
-  "peacock.color": "#8a00c2"
+  "peacock.color": "#8a00c2",
+  "cSpell.words": ["nbazar"]
 }

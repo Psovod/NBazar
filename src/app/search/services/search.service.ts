@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { ApiService } from '../../shared/api/api.service';
 import { lastValueFrom } from 'rxjs';
-import { RealityFilterTypeList } from '../types';
+import { RealityFilterHTMLType, RealityFilterTypeList, TransactionType } from '../types';
 import { Reality } from '../../shared/reality-list/types';
 import { SearchPaginationResult } from '../../shared/components/pagination/types';
 import { REAL_ESTATE_FILTER_COUNTY_ARRAY, RealEstateFilterCounty } from '../../shared/constants/real-estate.byty';
@@ -11,8 +11,8 @@ import { REAL_ESTATE_FILTER_COUNTY_ARRAY, RealEstateFilterCounty } from '../../s
 })
 export class SearchService {
   private api = inject(ApiService);
-  public query(data: Array<RealityFilterTypeList>): string {
-    return this.getSearchResults(data);
+  public query(data: Array<RealityFilterTypeList>, transaction_type: TransactionType): string {
+    return this.getSearchResults(data, transaction_type);
   }
   public async search(
     type: number,
@@ -55,8 +55,12 @@ export class SearchService {
       .map((char) => diacritics[char] || char)
       .join('');
   }
-  private getSearchResults(data: Array<RealityFilterTypeList>) {
-    const _query = data.flatMap((item) => {
+  private getSearchResults(data: Array<RealityFilterTypeList>, transaction_type: TransactionType): string {
+    const _data = structuredClone(data);
+    const _query = _data.flatMap((item) => {
+      if (item.dbKey === 'price' || item.dbKey === 'area' || item.dbKey === 'floor') {
+        this.setDefaultFilterValues(item.filters);
+      }
       return Object.entries({
         [item.dbKey]: item.filters
           .filter((filter) => filter.active || filter.value)
@@ -67,6 +71,19 @@ export class SearchService {
           return `${this.removeDiacritics(key).replaceAll(' ', '_').toLocaleLowerCase()}=${value.join(',')}`;
         });
     });
-    return _query.join('&');
+    return _query.join('&') + `&transaction_type=${transaction_type.dbKey}`;
+  }
+  private setDefaultFilterValues(data: Array<RealityFilterHTMLType>): Array<RealityFilterHTMLType> {
+    const from = data.find((filter) => filter.name === 'od');
+    const to = data.find((filter) => filter.name === 'do');
+    if (from?.value === null && to?.value === null) return data;
+
+    if (from && !from.value) {
+      from.value = 0;
+    }
+    if (to && !to.value) {
+      to.value = 1000000000;
+    }
+    return data;
   }
 }

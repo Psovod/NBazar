@@ -7,7 +7,7 @@ import { DropdownComponent } from '../shared/components/dropdown/dropdown.compon
 import { Subscription } from 'rxjs';
 import { REAL_ESTATE, REAL_ESTATE_OBJECT, REAL_ESTATE_TYPE } from '../shared/constants';
 import { CommonModule } from '@angular/common';
-import { RealityFilterHTMLType, RealityFilterTypeList, SearchActiveType } from './types';
+import { RealityFilterHTMLType, RealityFilterTypeList, TransactionType } from './types';
 import { SearchService } from './services/search.service';
 import { REAL_ESTATE_FILTER_INPUT_TYPE } from '../shared/constants/real-estate.byty';
 import { FormsModule } from '@angular/forms';
@@ -30,14 +30,16 @@ export class SearchComponent {
     });
   }
   private routeSubscription: Subscription;
-  public activeType: Array<SearchActiveType> = [
+  public transactionType: Array<TransactionType> = [
     {
       active: true,
       name: 'Prodej',
+      dbKey: 1,
     },
     {
       active: false,
       name: 'Pronájem',
+      dbKey: 0,
     },
   ];
 
@@ -48,26 +50,25 @@ export class SearchComponent {
   public activeFilters: Array<RealityFilterTypeList> = [];
   public iconDown: IconDefinition = faChevronDown;
   public searchCount: number = 0;
-  ngOnInit(): void {
-    this.onTypeClick(this.activeType[0]);
-    this.getSearchCount();
-  }
+  ngOnInit(): void {}
 
-  onCheckboxChange(event: SearchActiveType) {
+  onCheckboxChange(event: TransactionType) {
     this.getSearchCount();
   }
   onItemSelected(item: REAL_ESTATE_TYPE) {
     this.router.navigate(['/hledej', item]);
   }
   public async search() {
-    const query = this.searchService.query(this.activeFilters);
+    const transaction_type = this.transactionType.find((item) => item.active) as TransactionType;
+    const query = this.searchService.query(this.activeFilters, transaction_type);
     const type = this.searchService.removeDiacritics(this.query).replaceAll(' ', '_').toLocaleLowerCase();
     await this.router.navigate(['/hledej', type, query]);
   }
-  onTypeClick(type: SearchActiveType) {
-    this.activeType = this.activeType.map((item) => ({
+  onTransactionTypeClick(type: TransactionType) {
+    this.transactionType = this.transactionType.map((item) => ({
       name: item.name,
       active: item.name === type.name,
+      dbKey: item.dbKey,
     }));
     if (this.query === REAL_ESTATE_TYPE.BYTY && type.name === 'Prodej') {
       //filter 'typ' 'pokoj' from activeFilters
@@ -160,7 +161,8 @@ export class SearchComponent {
     this.getSearchCount();
   }
   private getSearchCount() {
-    const query = this.searchService.query(this.activeFilters);
+    const transaction_type = this.transactionType.find((item) => item.active) as TransactionType;
+    const query = this.searchService.query(this.activeFilters, transaction_type);
     const type =
       Object.values(REAL_ESTATE_TYPE).findIndex((item) => {
         return item === this.query;

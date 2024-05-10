@@ -3,17 +3,20 @@ import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../auth/auth.service';
 import { CommonModule } from '@angular/common';
 import { HeaderRoutes } from './types';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { IconDefinition, faHome } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, FontAwesomeModule],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss',
 })
 export class HeaderComponent {
   private auth = inject(AuthService);
   private router = inject(Router);
+  public icon: IconDefinition = faHome;
   public routes: Array<HeaderRoutes> = [
     {
       name: 'Domů',

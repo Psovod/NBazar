@@ -9,6 +9,7 @@ import { Reality, RealityListConfig } from '../shared/reality-list/types';
 import { ActivatedRoute } from '@angular/router';
 import { Pagination, SearchPaginationResult } from '../shared/components/pagination/types';
 import { PaginationComponent } from '../shared/components/pagination/pagination.component';
+import { AuthService } from '../shared/auth/auth.service';
 
 @Component({
   selector: 'app-user',
@@ -20,6 +21,7 @@ import { PaginationComponent } from '../shared/components/pagination/pagination.
 })
 export class MyRealityComponent {
   private api = inject(ApiService);
+  private auth = inject(AuthService);
   private modal = inject(ModalService);
   private route = inject(ActivatedRoute);
   public loading$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
@@ -30,7 +32,14 @@ export class MyRealityComponent {
     totalItems: 0,
     lastPage: 0,
   };
+  public isUserOwner!: boolean;
   public realityList$: BehaviorSubject<Array<Reality>> = new BehaviorSubject<Array<Reality>>([]);
+  constructor() {
+    this.route.params.subscribe((params) => {
+      this.isUserOwner = this.auth.user?.id == params['id'];
+      this.handleLoad(this.pagination);
+    });
+  }
   ngOnInit(): void {
     this.handleLoad(this.pagination);
   }
@@ -62,6 +71,9 @@ export class MyRealityComponent {
       });
   }
   public createReality() {
+    if (!this.isUserOwner) {
+      return;
+    }
     this.modal
       .open(RealityCreateComponent, 'Přidání nové reality', undefined, {
         uuid: null,

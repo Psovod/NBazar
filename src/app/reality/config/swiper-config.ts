@@ -1,7 +1,5 @@
 // import { SwiperOptions } from "swiper/types";
-import { Navigation, Pagination } from 'swiper/modules';
 export const SwiperConfig: any = {
-  modules: [Navigation, Pagination],
   injectStyles: [
     `.swiper-pagination--custom {
         border-radius: 10px;

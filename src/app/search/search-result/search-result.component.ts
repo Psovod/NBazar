@@ -49,6 +49,14 @@ export class SearchResultComponent {
     this.route.params.subscribe(async (params) => {
       this.query = params['query'];
       this.filter = params['filters'];
+      const searchParams = new URLSearchParams(this.filter);
+      let transactionType: string | null = searchParams.get('transaction_type');
+      if (transactionType === '0') {
+        transactionType = 'Pronájem';
+      } else {
+        transactionType = 'Prodej';
+      }
+      this.query = `${transactionType} ${this.query}`;
       this.maps.reset();
       await this.handleSearch(this.pagination);
     });

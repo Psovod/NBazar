@@ -94,6 +94,22 @@
               </div>
               <div class="border-b p-1">
                 <div class="flex justify-between">
+                  <strong>Vybavení:</strong>
+                  <span class="text-black capitalize">{{ reality.furniture ? "Ano" : "Ne" }}</span>
+                </div>
+              </div>
+              <div class="border-b p-1">
+                <div class="flex justify-between">
+                  <strong>Něco navíc:</strong>
+                  <div class="flex flex-wrap">
+                    @for (equipment of reality.additional_equipment | delimiter: ','; track $index) {
+                    <span class="text-black capitalize ml-1">{{ equipment }}</span>
+                    }
+                  </div>
+                </div>
+              </div>
+              <div class="border-b p-1">
+                <div class="flex justify-between">
                   <strong>Stav objektu:</strong>
                   <span class="text-black capitalize">{{ reality.condition }}</span>
                 </div>

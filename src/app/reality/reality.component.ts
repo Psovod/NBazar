@@ -30,6 +30,7 @@ import { SwiperConfig } from './config/swiper-config';
 import { SnackbarService } from '../shared/components/snackbar/services/snackbar.service';
 import { ModalService } from '../shared/modal/modal.service';
 import { ConfirmComponent } from '../shared/components/confirm-delete/confirm.component';
+import { DelimiterPipe } from './pipes/delimiter.pipe';
 
 export interface RealityIcons {
   user: IconDefinition;
@@ -57,6 +58,7 @@ export interface WatchedRealityMessage {
     FavoriteRealityPipe,
     ImagePathPipe,
     EnergyColorCodePipe,
+    DelimiterPipe,
   ],
   providers: [{ provide: LOCALE_ID, useValue: 'cs-CZ' }, ModalService],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],

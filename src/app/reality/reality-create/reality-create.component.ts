@@ -14,7 +14,7 @@ import {
 import { Subject } from 'rxjs';
 import { FileUploadComponent } from '../../shared/components/file-upload/file-upload.component';
 import { CheckboxComponent } from '../../shared/components/checkbox/checkbox.component';
-import { SearchActiveType } from '../../search/types';
+import { TransactionType } from '../../search/types';
 import { RealityCreateService } from './services/reality-create.service';
 import { MapsAutocompleteComponent } from '../../shared/components/maps/maps-autocomplete/maps-autocomplete.component';
 import { RealityLocation } from '../../shared/reality-list/types';
@@ -95,13 +95,16 @@ export class RealityCreateComponent {
       this.selectedStepIndex--;
     }
   }
-  public changeCheckBox(event: SearchActiveType, item: RealityCreateOptions, option: RealityCreateFormValues): void {
-    option.value = event.active ? option.value : null;
-    if (item.value instanceof Array) {
-      item.value.push(option.value);
-      item.value.filter((val) => val !== option.value);
-    } else {
-      item.value = [option.value];
+  public changeCheckBox(event: TransactionType, item: RealityCreateOptions, option: RealityCreateFormValues): void {
+    if (event.active) {
+      if (item.value instanceof Array) {
+        item.value.push(option.value);
+        item.value.filter((val) => val !== option.value);
+      } else {
+        item.value = [option.value];
+      }
+    } else if (item.value instanceof Array) {
+      item.value = item.value.filter((val) => val !== option.value);
     }
   }
 

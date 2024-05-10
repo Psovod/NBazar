@@ -1,9 +1,9 @@
 import { REAL_ESTATE_FILTER_INPUT_TYPE } from '../../shared/constants/real-estate.byty';
-import { Reality } from '../../shared/reality-list/types';
 
-export interface SearchActiveType {
+export interface TransactionType {
   active: boolean;
   name: string;
+  dbKey: number;
 }
 
 export interface RealityFilterTypeList {

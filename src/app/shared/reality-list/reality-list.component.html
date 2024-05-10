@@ -6,7 +6,7 @@
         [ngSrc]="reality.images | imagePath"
         width="150"
         height="150"
-        class="h-20 w-20 rounded object-contain" />
+        class="h-20 w-20 rounded object-cover" />
       <div>
         <div class="font-medium">{{ reality | realityName }}</div>
         <div class="text-sm text-gray-600">{{ reality.location | realityLocation }}</div>
@@ -41,7 +41,7 @@
       <button
         (click)="removeFavorite(reality.uuid)"
         class="btn-primary">
-        Odebrat z oblíbených
+        Odebrat
       </button>
       }
     </div>

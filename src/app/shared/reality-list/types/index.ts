@@ -33,6 +33,7 @@ export interface Reality {
   ownership_type: RealEstateOwnership;
   price: number;
   energy_consumption: RealEstateEnergyConsumption;
+  additional_equipment: Array<string>;
   building_material: RealEstateMaterial;
   condition: RealEstateCondition;
   floor?: number;
