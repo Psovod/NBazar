@@ -1,0 +1,102 @@
+import { RealEstateFilterMap } from '.';
+import {
+  REAL_ESTATE_ENERGETICKA_TRIDA_ARRAY,
+  REAL_ESTATE_FILTER_COUNTY_ARRAY,
+  REAL_ESTATE_FILTER_DB_KEY_ARRAY,
+  REAL_ESTATE_FILTER_INPUT_TYPE,
+  REAL_ESTATE_STARI_ARRAY,
+  REAL_ESTATE_STAVBA_ARRAY,
+  REAL_ESTATE_STAV_OBJEKTU_ARRAY,
+} from './real-estate.byty';
+
+export enum REAL_ESTATE_FILTER_DOMY {
+  VELIKOST = 'velikost',
+  TYP = 'typ',
+  STAV_OBJEKTU = 'stav objektu',
+  VYBER_LOKALITY = 'výběr lokality',
+  CENA = 'cena',
+  STAVBA = 'stavba',
+  ENERGETICKA_TRIDA = 'energetická třida',
+  PLOCHA_UZITNA = 'užitná plocha',
+  STARI = 'staří',
+}
+
+export const REAL_ESTATE_DOMY_VELIKOST_ARRAY = [
+  '1 Pokoj',
+  '2 Pokoje',
+  '3 Pokoje',
+  '4 Pokoje',
+  '5 a více pokojů',
+  'Atypický',
+];
+export type RealEstateSubTypeDomy =
+  | 'chalupa'
+  | 'chata'
+  | 'rodinný'
+  | 'vila'
+  | 'na klíč'
+  | 'zemědělská usedlost'
+  | 'památka/jiné'
+  | 'vícegenerační dům';
+
+export const REAL_ESTATE_DOMY_TYP_ARRAY: Array<RealEstateSubTypeDomy> = [
+  'chalupa',
+  'chata',
+  'rodinný',
+  'vila',
+  'na klíč',
+  'zemědělská usedlost',
+  'památka/jiné',
+  'vícegenerační dům',
+];
+
+const REAL_ESTATE_DOMY_CENA_ARRAY = ['od', 'do'];
+const REAL_ESTATE_DOMY_UZITNA_PLOCHA_ARRAY = ['od', 'do'];
+const REAL_ESTATE_DOMY_PLOCHA_POZEMKU_ARRAY = ['od', 'do'];
+export const REAL_ESTATE_FILTER_DOMY_MAP: RealEstateFilterMap = {
+  [REAL_ESTATE_FILTER_DOMY.VELIKOST]: {
+    type: REAL_ESTATE_FILTER_INPUT_TYPE.CHECKBOX,
+    array: REAL_ESTATE_DOMY_VELIKOST_ARRAY,
+    dbKey: REAL_ESTATE_FILTER_DB_KEY_ARRAY.VELIKOST,
+  },
+  [REAL_ESTATE_FILTER_DOMY.TYP]: {
+    type: REAL_ESTATE_FILTER_INPUT_TYPE.CHECKBOX,
+    array: REAL_ESTATE_DOMY_TYP_ARRAY,
+    dbKey: REAL_ESTATE_FILTER_DB_KEY_ARRAY.POD_TYP,
+  },
+  [REAL_ESTATE_FILTER_DOMY.STAV_OBJEKTU]: {
+    type: REAL_ESTATE_FILTER_INPUT_TYPE.CHECKBOX,
+    array: REAL_ESTATE_STAV_OBJEKTU_ARRAY,
+    dbKey: REAL_ESTATE_FILTER_DB_KEY_ARRAY.STAV_OBJEKTU,
+  },
+  [REAL_ESTATE_FILTER_DOMY.VYBER_LOKALITY]: {
+    type: REAL_ESTATE_FILTER_INPUT_TYPE.CHECKBOX,
+    array: REAL_ESTATE_FILTER_COUNTY_ARRAY,
+    dbKey: REAL_ESTATE_FILTER_DB_KEY_ARRAY.VYBER_LOKALITY,
+  },
+  [REAL_ESTATE_FILTER_DOMY.CENA]: {
+    type: REAL_ESTATE_FILTER_INPUT_TYPE.RANGE,
+    array: REAL_ESTATE_DOMY_CENA_ARRAY,
+    dbKey: REAL_ESTATE_FILTER_DB_KEY_ARRAY.CENA,
+  },
+  [REAL_ESTATE_FILTER_DOMY.STAVBA]: {
+    type: REAL_ESTATE_FILTER_INPUT_TYPE.CHECKBOX,
+    array: REAL_ESTATE_STAVBA_ARRAY,
+    dbKey: REAL_ESTATE_FILTER_DB_KEY_ARRAY.STAVBA,
+  },
+  [REAL_ESTATE_FILTER_DOMY.ENERGETICKA_TRIDA]: {
+    type: REAL_ESTATE_FILTER_INPUT_TYPE.CHECKBOX,
+    array: REAL_ESTATE_ENERGETICKA_TRIDA_ARRAY,
+    dbKey: REAL_ESTATE_FILTER_DB_KEY_ARRAY.ENERGETICKA_TRIDA,
+  },
+  [REAL_ESTATE_FILTER_DOMY.PLOCHA_UZITNA]: {
+    type: REAL_ESTATE_FILTER_INPUT_TYPE.RANGE,
+    array: REAL_ESTATE_DOMY_UZITNA_PLOCHA_ARRAY,
+    dbKey: REAL_ESTATE_FILTER_DB_KEY_ARRAY.PLOCHA,
+  },
+  [REAL_ESTATE_FILTER_DOMY.STARI]: {
+    type: REAL_ESTATE_FILTER_INPUT_TYPE.DROPDOWN,
+    array: REAL_ESTATE_STARI_ARRAY,
+    dbKey: REAL_ESTATE_FILTER_DB_KEY_ARRAY.STARI,
+  },
+};

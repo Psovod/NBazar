@@ -1,0 +1,188 @@
+<div class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex justify-center items-center">
+  <div
+    class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white rounded-lg shadow-lg p-8 w-full max-w-3xl">
+    <div class="flex justify-between items-center mb-4">
+      <h4 class="text-lg font-bold">{{ title }}</h4>
+      <button
+        class="text-gray-500 hover:text-black"
+        (click)="close()">
+        <fa-icon
+          [icon]="icons[1]"
+          size="xl"></fa-icon>
+      </button>
+    </div>
+
+    <div class="container mx-auto p-4">
+      <div class="flex items-center mb-10">
+        @for (item of realityCreateOptionsSteps; track $index) {
+        <div
+          class="flex text-gray-500 relative"
+          (click)="selectedStepIndex = $index">
+          <div
+            [ngClass]="{
+              '!border-blue-500 ': selectedStepIndex === $index ,
+              'border-green-500 ': item.valid,
+             
+            }"
+            class="flex items-center cursor-pointer rounded-full h-10 w-10 py-2 border-2 text-gray-300 border-gray-300 justify-center">
+            <fa-icon
+              [icon]="item.valid ? icons[0] : icons[1]"
+              [ngClass]="{
+                'text-green-500': item.valid
+              }"
+              size="xl"></fa-icon>
+          </div>
+
+          <div class="absolute top-0 -ml-10 text-center mt-16 w-32 text-xs font-medium uppercase text-gray-500">
+            {{ item.name }}
+          </div>
+        </div>
+
+        @if (realityCreateOptionsSteps.length - 1 !== $index) {
+
+        <div
+          class="flex-auto border-t-4"
+          [ngClass]="{
+            'border-green-500': item.valid
+          }"></div>
+        } }
+      </div>
+    </div>
+    @if (realityCreateOptionsSteps[selectedStepIndex]; as selected) {
+    <div
+      class="flex flex-col gap-2 p-4 overflow-y-auto h-[calc(100dvh-50dvh)]"
+      [ngClass]="{ 'blur-sm ': isLoading$ | async }">
+      <div
+        [ngClass]="selected.layout"
+        class="w-full gap-2">
+        @for (item of realityCreateOptionsSteps[selectedStepIndex].field; track $index) { @if (item.options) { @if
+        (item.inputType === 'checkbox') {
+
+        <div [ngClass]="item.class">
+          <label
+            for="name"
+            class="text-sm">
+            <span class="capitalize">{{ item.name }}</span>
+          </label>
+          <div class="flex flex-wrap gap-2">
+            @for (option of item.options; track $index) {
+            <custom-checkbox
+              [option]="option"
+              [item]="item"
+              (onChangeCheckBox)="changeCheckBox($event, item, option)"></custom-checkbox>
+            }
+          </div>
+        </div>
+        } @if (item.inputType === 'select') {
+        <div [ngClass]="item.class">
+          <label
+            for="name"
+            class="text-sm">
+            <span class="capitalize">{{ item.name }}</span>
+          </label>
+          <select
+            (change)="validateField(selected)"
+            required
+            [disabled]="!!(isLoading$ | async)"
+            [(ngModel)]="item.value"
+            type="text"
+            id="name"
+            class="w-full input-primary">
+            @for (option of item.options; track $index) {
+            <option
+              [value]="option.value"
+              class="capitalize">
+              {{ option.name }}
+            </option>
+            }
+          </select>
+        </div>
+        } } @if (item.inputType === 'number') {
+        <div [ngClass]="item.class">
+          <label
+            [for]="item.name"
+            class="text-sm flex">
+            <span class="capitalize">{{ item.name }}</span>
+            <span class="text-xs text-gray-500 ml-2">{{ item.description }}</span>
+          </label>
+
+          <input
+            (change)="validateField(selected)"
+            [disabled]="!!(isLoading$ | async)"
+            [(ngModel)]="item.value"
+            type="number"
+            [id]="item.name"
+            required
+            class="w-full input-primary" />
+        </div>
+
+        } @if (item.inputType === 'textarea') {
+        <div [ngClass]="item.class">
+          <label
+            [for]="item.name"
+            class="text-sm">
+            <span class="capitalize">{{ item.name }}</span>
+          </label>
+
+          <textarea
+            (change)="validateField(selected)"
+            [disabled]="!!(isLoading$ | async)"
+            [(ngModel)]="item.value"
+            rows="6"
+            required
+            [id]="item.name"
+            class="w-full input-primary"></textarea>
+        </div>
+        } @if (item.inputType === 'maps') {
+        <div [ngClass]="item.class">
+          <label
+            [for]="item.name"
+            class="text-sm">
+            <span class="capitalize">{{ item.name }}</span>
+          </label>
+          <custom-maps-autocomplete
+            (onPlaceSelect)="validateField(selected)"
+            [item]="item"
+            [isLoading$]="isLoading$"></custom-maps-autocomplete>
+        </div>
+        } @if (item.inputType === 'files') {
+        <div [ngClass]="item.class">
+          <custom-file-upload
+            [item]="item"
+            (onImageRemove)="reality.onRemoveImage($event)"
+            (onImageChange)="validateField(selected)"></custom-file-upload>
+        </div>
+        } }
+      </div>
+    </div>
+
+    <div class="flex justify-end gap-2 mt-4">
+      <button
+        [disabled]="selectedStepIndex === 0"
+        (click)="previousStep()"
+        class="btn-primary">
+        Zpět
+      </button>
+      <button
+        class="btn-primary capitalize"
+        [disabled]="!!(isLoading$ | async) || !realityCreateOptionsSteps[selectedStepIndex].valid"
+        (click)="nextStep()"
+        [ngClass]="{
+          'opacity-50 cursor-not-allowed': (isLoading$ | async),
+          'bg-red-500': (isError$ | async)
+        }">
+        @if (isError$ | async ) {
+        {{ selectedStepIndex === realityCreateOptionsSteps.length - 1 ? "Zkusit znovu" : "Další" }}
+        } @else {
+        {{ selectedStepIndex === realityCreateOptionsSteps.length - 1 ? config.action : "Další" }}
+        }
+      </button>
+    </div>
+    }
+  </div>
+  @if ( isLoading$ | async ) {
+  <div class="flex justify-center items-center absolute">
+    <div class="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-blue-500"></div>
+  </div>
+  }
+</div>

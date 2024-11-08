@@ -79,7 +79,7 @@ export class SearchService {
     if (from?.value === null && to?.value === null) return data;
 
     if (from && !from.value) {
-      from.value = 1;
+      from.value = 0;
     }
     if (to && !to.value) {
       to.value = 1000000000;

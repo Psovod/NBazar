@@ -1,0 +1,16 @@
+<div class="max-w-5xl mx-auto my-10 h-[calc(100dvh-20dvh)] p-4">
+  <div class="text-2xl font-semibold mb-4">Sledované Reality</div>
+  <div class="text-gray-600 mb-2">Seznam všech realit, které sledujete.</div>
+
+  <div class="divide-y divide-gray-200">
+    <reality-list
+      [config]="config"
+      [realityList]="realityList$ | async"
+      [loading$]="loading$"></reality-list>
+    @if ((realityList$ | async)?.length) {
+    <custom-pagination
+      [pagination]="pagination"
+      (onPageChange)="onPageChange($event)"></custom-pagination>
+    }
+  </div>
+</div>

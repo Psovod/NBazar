@@ -1,0 +1,19 @@
+<google-map
+  #map="googleMap"
+  [width]="'100%'"
+  [height]="'100%'"
+  [center]="center"
+  [options]="options"
+  [zoom]="zoom"
+  [mapId]="mapId">
+  @for (position of markers$ | async; track position) {
+  <map-advanced-marker
+    #advancedMarker="mapAdvancedMarker"
+    [position]="position.marker.position"
+    [options]="position.marker.options"
+    [title]="position.marker.title"
+    [content]="position.marker.content"
+    (markerInitialized)="markerInitialized(advancedMarker, position.reality.uuid)"
+    (mapClick)="selectReality(position.reality.uuid)" />
+  }
+</google-map>

@@ -1,0 +1,63 @@
+<article
+  aria-label="File Upload Modal"
+  class="relative h-full flex flex-col bg-white"
+  (drop)="dropHandler($event)"
+  (dragover)="$event.preventDefault()"
+  (dragleave)="$event.preventDefault()"
+  (dragenter)="$event.preventDefault()">
+  <section class="overflow-auto p-8 w-full h-full flex flex-col">
+    <header
+      class="border-dashed rounded-lg border-2 border-gray-400 py-12 flex flex-col justify-center items-center mb-5">
+      <p class="mb-3 font-semibold text-gray-900 flex flex-wrap justify-center">
+        <span>Přetáhněte své</span>
+        &nbsp;
+        <span>fotografie kamkoli nebo</span>
+      </p>
+      <input
+        #fileInput
+        (change)="selectImages($event)"
+        type="file"
+        accept="image/*"
+        multiple
+        class="hidden" />
+      <button
+        (click)="fileInput.click()"
+        class="btn-primary">
+        Nahrát fotografie
+      </button>
+    </header>
+    <ul class="flex flex-1 flex-wrap -m-1">
+      @if (files.length <= 0) {
+      <li class="h-full w-full text-center flex flex-col justify-center items-center pt-8">
+        <span class="text-small text-gray-500">Žádné fotografie nevybrány</span>
+      </li>
+
+      } @for (item of files; track $index) {
+      <li class="block p-1 w-1/2 sm:w-1/3 md:w-1/4 lg:w-1/6 xl:w-1/8 h-24">
+        <article
+          tabindex="0"
+          class="group has-image w-full h-full rounded-md focus:outline-none focus:shadow-outline bg-gray-100 cursor-pointer relative text-transparent hover:text-white shadow-sm">
+          <img
+            [src]="containsBlobUrl(item) ? item : (item | imagePath)"
+            alt="nahraná fotografie"
+            class="img-preview w-full h-full sticky object-cover rounded-md bg-fixed" />
+
+          <section class="flex flex-col rounded-md text-xs break-words w-full h-full z-20 absolute top-0 py-2 px-3">
+            <h1 class="flex-1"></h1>
+            <div class="flex items-center">
+              <p class="p-1 size text-xs text-gray-200"></p>
+              <button
+                (click)="removeImage($index)"
+                class="delete ml-auto focus:outline-none hover:bg-gray-300 p-1 rounded-md">
+                <fa-icon
+                  class="pointer-events-none fill-current w-4 h-4 ml-auto"
+                  [icon]="deleteIcon"></fa-icon>
+              </button>
+            </div>
+          </section>
+        </article>
+      </li>
+      }
+    </ul>
+  </section>
+</article>

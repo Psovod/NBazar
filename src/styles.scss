@@ -1,1 +1,224 @@
-/* You can add global styles to this file, and also import other style files */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+    .btn-primary {
+        @apply px-4 py-2 bg-gray-100 text-sm rounded-md hover:bg-gray-200 focus:outline-none;
+    }
+
+    .btn-danger {
+        @apply px-4 py-2 bg-red-500 text-sm text-white rounded-md hover:bg-red-600 focus:outline-none;
+    }
+
+    :disabled {
+        @apply opacity-50 cursor-not-allowed;
+    }
+
+    .input-primary {
+        @apply px-4 py-2 border bg-white border-gray-300 text-base rounded-md focus:outline-none capitalize;
+    }
+
+
+    .input-primary.ng-invalid.ng-touched {
+        @apply border border-red-500;
+    }
+
+    .input-primary.ng-valid {
+        @apply border border-green-500;
+    }
+
+    .header-height {
+        @apply h-[6dvh]
+    }
+
+    .header-height-diff {
+        @apply h-[calc(100dvh-10dvh)]
+    }
+}
+
+/**
+ * @license
+ * Copyright 2019 Google LLC. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
+:root {
+    --domy-color: #FF9800;
+    --byty-color: #ac101d;
+    --pozemky-color: #7B1FA2;
+    --komercni-color: #558B2F;
+    --ostatni-color: #262626;
+}
+
+/*
+   * Property styles in unhighlighted state.
+   */
+.property {
+    align-items: center;
+    background-color: #FFFFFF;
+    border-radius: 50%;
+    color: #263238;
+    display: flex;
+    font-size: 14px;
+    gap: 15px;
+    height: 38px;
+    justify-content: center;
+    padding: 4px;
+    position: relative;
+    transition: all 0.3s ease-out;
+    width: 38px;
+}
+
+.property.selected {
+    height: 60px;
+    width: 60px;
+}
+
+.property::after {
+
+    height: 0;
+    left: 50%;
+    position: absolute;
+    top: 95%;
+    transform: translate(-50%, 0);
+    transition: all 0.3s ease-out;
+    width: 0;
+    z-index: 1;
+}
+
+.property .icon {
+    align-items: center;
+    display: flex;
+    justify-content: center;
+    color: #FFFFFF;
+}
+
+.property .icon svg {
+    height: 20px;
+    width: auto;
+}
+
+
+
+.property .details {
+    display: none;
+    flex-direction: column;
+    flex: 1;
+}
+
+.property .address {
+    color: #9E9E9E;
+    font-size: 10px;
+    margin-bottom: 10px;
+    margin-top: 5px;
+}
+
+
+/*
+   * Property styles in highlighted state.
+   */
+.property.highlight {
+    background-color: #FFFFFF;
+    border-radius: 8px;
+    box-shadow: 10px 10px 5px rgba(0, 0, 0, 0.2);
+    height: 80px;
+    padding: 0px 10px;
+    width: auto;
+}
+
+.property.highlight::after {
+    border-top: 9px solid #FFFFFF;
+}
+
+.property.highlight .details {
+    display: flex;
+}
+
+.property .image {
+    display: none;
+    /* Initially hide the image */
+}
+
+.property.highlight .icon svg {
+    width: 50px;
+    height: 50px;
+}
+
+.property.highlight .image {
+    display: flex;
+    /* Show the image */
+}
+
+.property.highlight .image img {
+    height: 50px;
+    width: auto;
+    border-radius: 10px
+}
+
+.property.highlight .iconka {
+    display: none;
+    /* Hide the icon */
+}
+
+/*
+   * House icon colors.
+   */
+.property.highlight:has(.type-byty) .icon {
+    color: var(--byty-color);
+}
+
+.property:not(.highlight):has(.type-byty) {
+    background-color: var(--byty-color);
+}
+
+.property:not(.highlight):has(.type-byty)::after {
+    border-top: 9px solid var(--byty-color);
+}
+
+.property.highlight:has(.type-domy) .icon {
+    color: var(--domy-color);
+}
+
+.property:not(.highlight):has(.type-domy) {
+    background-color: var(--domy-color);
+}
+
+.property:not(.highlight):has(.type-domy)::after {
+    border-top: 9px solid var(--domy-color);
+}
+
+.property.highlight:has(.type-pozemky) .icon {
+    color: var(--pozemky-color);
+}
+
+.property:not(.highlight):has(.type-pozemky) {
+    background-color: var(--pozemky-color);
+}
+
+.property:not(.highlight):has(.type-pozemky)::after {
+    border-top: 9px solid var(--pozemky-color);
+}
+
+.property.highlight:has(.type-komercni) .icon {
+    color: var(--komercni-color);
+}
+
+.property:not(.highlight):has(.type-komercni) {
+    background-color: var(--komercni-color);
+}
+
+.property:not(.highlight):has(.type-komercni)::after {
+    border-top: 9px solid var(--komercni-color);
+}
+
+.property.highlight:has(.type-ostatni) .icon {
+    color: var(--ostatni-color);
+}
+
+.property:not(.highlight):has(.type-ostatni) {
+    background-color: var(--ostatni-color);
+}
+
+.property:not(.highlight):has(.type-ostatni)::after {
+    border-top: 9px solid var(--ostatni-color);
+}

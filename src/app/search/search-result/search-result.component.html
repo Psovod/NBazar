@@ -1,0 +1,98 @@
+<div class="flex gap-2 w-full header-height-diff">
+  <!-- Left Side: Map Container -->
+  <div class="flex-1 max-h-screen">
+    <app-maps></app-maps>
+  </div>
+  @if ((maps.realityList$ | async); as realityList){
+
+  <div class="flex-1 rounded-lg bg-white shadow-md max-h-screen overflow-scroll">
+    <div class="sticky top-0 p-4 bg-gray-50 z-10 border-b border-gray-200">
+      <h3 class="font-semibold text-2xl">
+        Výsledek vyhlednávání pro
+        <span class="capitalize">{{ query }}</span>
+      </h3>
+    </div>
+    @if (!(loading$ | async)) { @if ((realityList.length > 0)) {
+    <div class="p-4">
+      <div class="grid grid-cols-1 gap-4">
+        @for (reality of realityList; track $index) {
+        <div class="bg-gray-50 hover:bg-gray-100 rounded-lg transition duration-150 ease-in-out p-4">
+          @if (reality.images.length > 0) {
+          <div
+            class="grid grid-cols-3 gap-2"
+            (click)="viewProperty(reality.uuid)">
+            @for (photo of reality.images.slice(0, 3); track $index) {
+            <img
+              [ngSrc]="photo | imagePath"
+              [width]="300"
+              [height]="300"
+              [alt]="photo"
+              [priority]="true"
+              class="rounded-lg w-full object-cover h-32 hover:opacity-75 cursor-pointer"
+              onerror="this.onerror=null; this.src='https://via.placeholder.com/200x150';" />
+            }
+          </div>
+          } @else {
+          <div class="grid grid-cols-3 gap-2">
+            <div class="bg-gray-200 rounded-lg w-full h-32"></div>
+            <div class="bg-gray-200 rounded-lg w-full h-32"></div>
+            <div class="bg-gray-200 rounded-lg w-full h-32"></div>
+          </div>
+          }
+
+          <div class="pt-4 text-xl flex flex-col">
+            <span
+              class="font-bold text-red-600 cursor-pointer hover:underline"
+              (click)="viewProperty(reality.uuid)">
+              {{ reality | realityName }}
+            </span>
+            <span class="text-gray-500">{{ reality.location | realityLocation }}</span>
+            <span class="text-gray-700">
+              {{ reality.price | currency : "CZK" : "symbol" : "1.0-0" }}
+            </span>
+          </div>
+        </div>
+        }
+      </div>
+
+      <custom-pagination
+        [pagination]="pagination"
+        (onPageChange)="onPageChange($event)"></custom-pagination>
+    </div>
+    } @else {
+    <div class="p-4">
+      <div class="bg-gray-50 rounded-lg transition duration-150 ease-in-out p-4">
+        <div class="text-xl flex flex-col">
+          <span class="font-bold text-red-600">Žádné výsledky nenalezeny</span>
+        </div>
+      </div>
+    </div>
+    } } @else {
+    <div class="p-4">
+      @for (item of [0,1,2,3,4,5]; track $index) {
+      <div class="bg-gray-50 hover:bg-gray-100 rounded-lg transition duration-150 ease-in-out p-4">
+        <div class="grid grid-cols-3 gap-2">
+          <!-- Placeholder for Images -->
+          <div class="animate-shimmer bg-gray-200 rounded-lg w-full h-32"></div>
+          <div class="animate-shimmer bg-gray-200 rounded-lg w-full h-32"></div>
+          <div class="animate-shimmer bg-gray-200 rounded-lg w-full h-32"></div>
+        </div>
+
+        <div class="pt-4 text-xl flex flex-col">
+          <!-- Placeholder for Title -->
+          <div class="animate-shimmer bg-red-200 h-6 w-3/4 rounded"></div>
+          <!-- Placeholder for Location -->
+          <div class="animate-shimmer bg-gray-300 h-4 w-1/2 rounded mt-2"></div>
+          <!-- Placeholder for Price -->
+          <div class="animate-shimmer bg-gray-300 h-4 w-1/3 rounded mt-2"></div>
+          <!-- Placeholder for User Info -->
+          <div class="animate-shimmer bg-gray-300 h-4 w-1/4 rounded mt-2"></div>
+        </div>
+      </div>
+
+      }
+    </div>
+    }
+  </div>
+  }
+</div>

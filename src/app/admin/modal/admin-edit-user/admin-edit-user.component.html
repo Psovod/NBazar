@@ -1,0 +1,52 @@
+<div class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex justify-center items-center">
+  <div
+    class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white rounded-lg shadow-lg p-8 w-full max-w-3xl">
+    <div class="flex justify-between items-center mb-4">
+      <div class="flex flex-col">
+        <h4 class="text-lg font-bold">{{ title }}</h4>
+        <span class="text-sm italic text-red-500">Změna Role se projeví až po novém příhlášení</span>
+      </div>
+      <button
+        class="text-gray-500 hover:text-black"
+        (click)="close()">
+        <fa-icon
+          [icon]="closeIcon"
+          size="xl"></fa-icon>
+      </button>
+    </div>
+    <div class="grid grid-cols-2 gap-2">
+      @for (item of forms; track $index) {
+      <div class="w-full">
+        <label
+          [for]="item.key"
+          class="py-2 block text-sm font-semibold">
+          {{ item.label }}
+        </label>
+        @switch (item.key) { @case ('role') {
+        <select
+          required
+          class="input-primary w-full"
+          [(ngModel)]="item.value">
+          @for (role of roleOptions; track $index) {
+          <option [value]="role">{{ role }}</option>
+          }
+        </select>
+        } @default {
+        <input
+          [type]="item.type"
+          class="input-primary w-full"
+          required
+          [(ngModel)]="item.value" />
+        } }
+      </div>
+      }
+    </div>
+    <div class="flex justify-end mt-2">
+      <button
+        class="btn-primary"
+        (click)="save()">
+        Uložit
+      </button>
+    </div>
+  </div>
+</div>

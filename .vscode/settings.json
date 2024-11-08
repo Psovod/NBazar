@@ -1,0 +1,13 @@
+{
+  "workbench.colorCustomizations": {
+    "commandCenter.border": "#e7e7e799",
+    "sash.hoverBorder": "#ae00f5",
+    "tab.activeBorder": "#ae00f5",
+    "titleBar.activeBackground": "#8a00c2",
+    "titleBar.activeForeground": "#e7e7e7",
+    "titleBar.inactiveBackground": "#8a00c299",
+    "titleBar.inactiveForeground": "#e7e7e799"
+  },
+  "peacock.color": "#8a00c2",
+  "cSpell.words": ["nbazar"]
+}

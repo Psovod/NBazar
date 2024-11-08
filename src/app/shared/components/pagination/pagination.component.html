@@ -1,0 +1,50 @@
+<div class="flex justify-end mt-4 gap-2">
+  <div class="flex justify-center items-center gap-2">
+    <span class="text-sm text-gray-800">Počet na stránku</span>
+    <select
+      class="px-2 py-2 border bg-white border-gray-300 rounded-lg"
+      [(ngModel)]="pagination.itemsPerPage"
+      (change)="onItemsPerPageChange()">
+      <option value="10">10</option>
+      <option value="25">25</option>
+      <option value="50">50</option>
+    </select>
+  </div>
+  <div class="flex justify-center items-center">
+    <span class="text-base text-gray-800">
+      {{ pagination.itemsPerPage * (pagination.currentPage - 1) + 1 }} -
+      {{
+        pagination.lastPage === pagination.currentPage
+          ? pagination.totalItems
+          : pagination.itemsPerPage * pagination.currentPage
+      }}
+      of
+      {{ pagination.totalItems }}
+    </span>
+  </div>
+  <button
+    class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600"
+    (click)="handlePageChange(1)"
+    [disabled]="pagination.currentPage === 1">
+    <fa-icon [icon]="paginationIcons.first"></fa-icon>
+  </button>
+  <button
+    class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600"
+    (click)="handlePageChange(pagination.currentPage - 1)"
+    [disabled]="pagination.currentPage === 1">
+    <fa-icon [icon]="paginationIcons.prev"></fa-icon>
+  </button>
+
+  <button
+    class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 disabled:opacity-50 disabled:cursor-not-allowed"
+    (click)="handlePageChange(pagination.currentPage + 1)"
+    [disabled]="pagination.currentPage === pages.length">
+    <fa-icon [icon]="paginationIcons.next"></fa-icon>
+  </button>
+  <button
+    class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600"
+    (click)="handlePageChange(pagination.lastPage)"
+    [disabled]="pagination.currentPage === pages.length">
+    <fa-icon [icon]="paginationIcons.last"></fa-icon>
+  </button>
+</div>

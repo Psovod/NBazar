@@ -1,0 +1,105 @@
+<div class="overflow-scroll h-[calc(100dvh-12dvh)] max-w-5xl mx-auto my-4 p-5 rounded-lg shadow">
+  <div class="flex">
+    <div class="text-2xl font-semibold mr-auto">{{ filter.active.name }}</div>
+    <div>
+      <button
+        (click)="changeList(filter.users)"
+        [ngClass]="{
+          'bg-red-500 !text-white opacity-100 cursor-pointer': filter.active.active === filter.users.active
+        }"
+        class="text-gray-700 px-3 py-1 rounded-full font-bold">
+        {{ filter.users.name }}
+      </button>
+      <button
+        (click)="changeList(filter.reality)"
+        [ngClass]="{
+          'bg-red-500 !text-white opacity-100 cursor-pointer': filter.active.active === filter.reality.active
+        }"
+        class="text-gray-700 px-3 py-1 rounded-full font-bold">
+        {{ filter.reality.name }}
+      </button>
+    </div>
+  </div>
+  <div class="text-gray-600 mb-2">{{ filter.active.info }}</div>
+  @switch (filter.active._name) { @case ('users') { @if (!(loading$ | async)) { @if (users$ | async; as users ) { @if
+  (users.length > 0) {
+  <div class="grid grid-cols-12 gap-4 items-center">
+    <div class="col-span-2 font-semibold">Emailová adresa</div>
+    <div class="col-span-2 font-semibold">Celé jméno</div>
+    <div class="col-span-2 font-semibold">Role</div>
+
+    <div class="col-span-6"></div>
+    <div class="col-span-12">
+      <div class="border-b border-gray-200 my-2"></div>
+    </div>
+    @for (user of users; track $index) {
+    <div class="col-span-2 truncate">{{ user.email }}</div>
+    <div class="col-span-2 truncate">{{ user.name + " " + user.surname }}</div>
+    <div class="col-span-2 capitalize">{{ user.role }}</div>
+    <div class="col-span-6 flex justify-end items-center space-x-3">
+      <button
+        (click)="view(user)"
+        class="btn-primary">
+        Zobrazit Reality
+      </button>
+      <button
+        (click)="edit(user)"
+        class="btn-primary">
+        Editace
+      </button>
+      <button
+        (click)="delete(user)"
+        class="btn-danger">
+        Smazat
+      </button>
+    </div>
+    <div class="col-span-12">
+      <div class="border-b border-gray-200 my-2"></div>
+    </div>
+    }
+  </div>
+  <custom-pagination
+    [pagination]="pagination"
+    (onPageChange)="pageChange($event)"></custom-pagination>
+  } @else {
+  <div class="col-span-12 text-center">Žádní uživatelé</div>
+  } } } @else {
+  <div class="grid grid-cols-12 gap-4 items-center">
+    @for (item of [1,2,3,4,5]; track $index) {
+    <!-- Skeleton loading for user email -->
+    <div class="col-span-2 animate-pulse bg-gray-300 h-4 w-1/2 rounded-md"></div>
+
+    <!-- Skeleton loading for user name and surname -->
+    <div class="col-span-2 animate-pulse bg-gray-300 h-4 w-10/12 rounded-md"></div>
+
+    <!-- Skeleton loading for user role -->
+    <div class="col-span-2 animate-pulse bg-gray-300 h-4 w-12/12 rounded-md capitalize"></div>
+
+    <!-- Skeleton loading for action buttons -->
+    <div class="col-span-6 flex justify-end items-center space-x-3">
+      <div class="animate-pulse btn-primary px-8 py-4"></div>
+      <!-- Placeholder for view button -->
+      <div class="animate-pulse btn-primary px-8 py-4"></div>
+      <!-- Placeholder for edit button -->
+      <div class="animate-pulse btn-danger px-8 py-4"></div>
+      <!-- Placeholder for delete button -->
+    </div>
+
+    <!-- Skeleton loading for bottom border, simulating a divider -->
+    <div class="col-span-12">
+      <div class="border-b border-gray-200 my-2 animate-pulse"></div>
+    </div>
+
+    }
+  </div>
+  } } @case ('reality') { @if (realityList$ | async; as realityList ) { @if (realityList.length > 0) {
+  <reality-list
+    [loading$]="loading$"
+    [config]="config"
+    [realityList]="realityList"></reality-list>
+  <custom-pagination
+    [pagination]="pagination"
+    (onPageChange)="pageChange($event)"></custom-pagination>
+
+  } } } }
+</div>
